@@ -1,0 +1,23 @@
+# Datos de StatsBomb (licencia y credenciales privadas)
+data/
+*.pkl
+*.pkl.gz
+*.parquet
+*.csv
+*.log
+*_events.json
+ftm_*.json
+ft_min.json
+desc_*.json
+
+# Credenciales y entornos
+.env
+*.env
+.venv/
+venv/
+
+# Jupyter y Python
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.DS_Store

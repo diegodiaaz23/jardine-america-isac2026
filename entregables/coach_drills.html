@@ -1,0 +1,538 @@
+<title>Coach Drills América</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una sola columna tipo libreta de banca. Cada drill es una tarjeta con situación, cifras, decisión y revelado de evidencia. */
+:root {
+  --bg: #F2F4F8;
+  --surface: #FFFFFF;
+  --surface-2: #E9EDF4;
+  --fg: #0D1A2D;
+  --muted: #55637A;
+  --line: #CFD6E2;
+  --navy: #0B2F6B;
+  --navy-fg: #FFFFFF;
+  --gold: #E8A800;
+  --gold-soft: #FFF1C2;
+  --ok: #1B6B45;
+  --ok-soft: #DDF1E6;
+  --warn: #8A5A00;
+  --warn-soft: #FFEBC7;
+  --bad: #A5322A;
+  --bad-soft: #F8DEDB;
+  --f-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1322; --surface: #111E35; --surface-2: #192A47; --fg: #E8EDF6; --muted: #94A2BA; --line: #26385A;
+    --navy: #7DA7FF; --navy-fg: #0A1322; --gold: #F5C518; --gold-soft: #3A3010;
+    --ok: #62D39A; --ok-soft: #12382A; --warn: #F2B84B; --warn-soft: #3A2A0C; --bad: #FF8A80; --bad-soft: #3F1A18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A1322; --surface: #111E35; --surface-2: #192A47; --fg: #E8EDF6; --muted: #94A2BA; --line: #26385A;
+  --navy: #7DA7FF; --navy-fg: #0A1322; --gold: #F5C518; --gold-soft: #3A3010;
+  --ok: #62D39A; --ok-soft: #12382A; --warn: #F2B84B; --warn-soft: #3A2A0C; --bad: #FF8A80; --bad-soft: #3F1A18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.5;
+  padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 700; letter-spacing: .01em; text-wrap: balance; margin: 0; line-height: 1.05; }
+h1 { font-size: clamp(2.2rem, 7vw, 3.1rem); }
+h2 { font-size: 1.7rem; }
+h3 { font-size: 1.15rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+p { margin: 0; }
+.eyebrow { font-family: var(--f-data); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.timer { font-family: var(--f-data); font-variant-numeric: tabular-nums; text-align: right; min-width: 0; }
+.timer b { font-size: 1.9rem; font-weight: 500; display: block; line-height: 1; }
+.timer span { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.timer.over b { color: var(--bad); }
+.steps { display: flex; gap: 6px; }
+.steps i { flex: 1; height: 6px; border-radius: 3px; background: var(--line); }
+.steps i.done { background: var(--navy); }
+.steps i.now { background: var(--gold); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.situation { font-size: 1.12rem; font-weight: 500; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.stat { background: var(--surface-2); border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.stat span { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.stat b { font-family: var(--f-data); font-weight: 500; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.question { font-family: var(--f-display); font-size: 1.5rem; font-weight: 600; line-height: 1.15; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  font: inherit; text-align: left; color: var(--fg); background: var(--surface); border: 1.5px solid var(--line); border-radius: 8px;
+  padding: 12px 14px; cursor: pointer; display: flex; gap: 12px; align-items: baseline; min-height: 48px;
+}
+.opt kbd { font-family: var(--f-data); font-size: .8rem; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; flex: none; }
+.opt:hover:not(:disabled) { border-color: var(--navy); }
+.opt:focus-visible, .btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.opt:disabled { cursor: default; }
+.opt.picked { border-color: var(--navy); background: var(--surface-2); }
+.btn {
+  font: inherit; font-weight: 600; background: var(--navy); color: var(--navy-fg); border: 0; border-radius: 8px; padding: 12px 20px;
+  cursor: pointer; align-self: flex-start; min-height: 48px;
+}
+.btn.ghost { background: transparent; color: var(--fg); border: 1.5px solid var(--line); }
+.reveal { display: flex; flex-direction: column; gap: 16px; border-top: 1px dashed var(--line); padding-top: 16px; }
+.reveal[hidden] { display: none; }
+.verdict { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; padding: 6px 12px; border-radius: 6px; align-self: flex-start; font-size: .95rem; }
+.verdict.ok { background: var(--ok-soft); color: var(--ok); }
+.verdict.sin { background: var(--warn-soft); color: var(--warn); }
+.verdict.no { background: var(--bad-soft); color: var(--bad); }
+.ctx { display: flex; flex-direction: column; gap: 6px; }
+.ctx h3 { margin: 0; }
+.ctx .tw { overflow-x: auto; }
+.ctx table { border-collapse: collapse; width: 100%; font-size: .86rem; font-variant-numeric: tabular-nums; }
+.ctx th, .ctx td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+.ctx th:first-child, .ctx td:first-child { text-align: left; }
+.ctx th { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 500; }
+.ctx td.lo { color: var(--bad, #A5322A); font-weight: 600; }
+.block { display: flex; flex-direction: column; gap: 6px; }
+.block p { max-width: 65ch; }
+.probbar { display: flex; height: 30px; border-radius: 6px; overflow: hidden; font-family: var(--f-data); font-size: .8rem; font-variant-numeric: tabular-nums; }
+.probbar div { display: flex; align-items: center; justify-content: center; color: #fff; min-width: 0; overflow: hidden; }
+.pb-g { background: #1B6B45; } .pb-e { background: #6B7788; } .pb-p { background: #A5322A; }
+.ci { position: relative; height: 54px; margin: 6px 0 2px; }
+.ci .axis { position: absolute; left: 0; right: 0; top: 24px; height: 2px; background: var(--line); }
+.ci .zero { position: absolute; top: 10px; bottom: 6px; width: 2px; background: var(--fg); left: 50%; }
+.ci .range { position: absolute; top: 20px; height: 10px; border-radius: 5px; background: var(--gold); }
+.ci .pt { position: absolute; top: 16px; width: 4px; height: 18px; background: var(--navy); border-radius: 2px; }
+.ci .lbl { position: absolute; top: 38px; font-family: var(--f-data); font-size: .72rem; color: var(--muted); transform: translateX(-50%); white-space: nowrap; }
+.ci .lbl.z { top: -4px; color: var(--fg); }
+.note { font-size: .88rem; color: var(--muted); max-width: 65ch; }
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cmp .stat b { font-size: 1.3rem; }
+.sum-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.list { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 6px; max-width: 65ch; }
+.foot { font-size: .8rem; color: var(--muted); font-family: var(--f-data); }
+@media (prefers-reduced-motion: no-preference) { .reveal { animation: in .25s ease-out; } @keyframes in { from { opacity: 0; transform: translateY(6px); } } }
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+var LIMIT = 240;
+var BANK = [
+  {
+    id: "d_toluca", kind: "descanso",
+    tag: "Descanso · modelo predictivo",
+    title: "Toluca – América, visitante",
+    sit: "Torneo Apertura 2025, 9 de noviembre. Medio tiempo: América pierde 0-1 en Toluca. Estas son sus cifras del primer tiempo.",
+    stats: [["Marcador", "0 – 1"], ["xG propio / rival", "0.18 / 0.44"], ["Posesión", "50.9%"], ["PPDA", "6.08"]],
+    statsNote: "PPDA alto significa presionar poco: 6.08 es de los más altos de la temporada 2025/26.",
+    ctx: { table: '<table><thead><tr><th>Tramo del 1T</th><th>xG Amér.</th><th>xG Toluca</th><th>Tiros</th><th>Field tilt</th><th>Su media</th></tr></thead><tbody>' +
+      '<tr><td>0-15</td><td>0.13</td><td>0.12</td><td>1-1</td><td class="lo">30%</td><td>58%</td></tr>' +
+      '<tr><td>15-30</td><td>0.00</td><td>0.07</td><td>0-3</td><td class="lo">40%</td><td>60%</td></tr>' +
+      '<tr><td>30-45+</td><td>0.05</td><td>0.25</td><td>1-5</td><td class="lo">24%</td><td>56%</td></tr></tbody></table>',
+      note: "Toluca anotó al 39' y era el campeón vigente. El partido fue peor cada 15 minutos: desde el minuto 15 América casi no generó peligro y completó entre 46% y 51% de los pases del partido, contra 55% en su media. Field tilt: porcentaje de acciones en zona de ataque que son propias (su media es la de los 129 partidos de Jardine en ese tramo)." },
+    q: "Es el descanso. ¿Qué haces?",
+    opts: [
+      { t: "Mantener el planteamiento", v: "no", why: "El modelo estima 65% de derrota si el segundo tiempo se parece al primero. Mantener es la opción que menos cambia esa cifra." },
+      { t: "Ajustar: presionar más arriba y subir el volumen ofensivo", v: "ok", why: "Es la lectura que respalda el modelo: el primer tiempo mostró poca presión (PPDA 6.08) y poca amenaza (xG 0.18). Ojo: el modelo dice qué pasa si nada cambia, no demuestra que ajustar funcione." },
+      { t: "Cerrar el partido con un cambio defensivo", v: "no", why: "Con 0.18 de xG propio y perdiendo, el patrón de datos no sostiene replegarse: la derrota ya es el escenario más probable." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Lo que dice el modelo al descanso</h3>' +
+        '<div class="probbar" role="img" aria-label="Gana 7.3%, empata 27.2%, pierde 65.5%"><div class="pb-g" style="width:7.3%"></div><div class="pb-e" style="width:27.2%">27%</div><div class="pb-p" style="width:65.5%">Pierde 65.5%</div></div>' +
+        '<p class="note">Gana 7.3% · Empata 27.2% · Pierde 65.5%. El modelo compara este primer tiempo con el de partidos anteriores de Jardine (se explica justo debajo de este simulador). Probado en 38 partidos que no vio, le da en promedio 43% de probabilidad a lo que ocurre; un modelo que solo repite el historial, 34%.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>América terminó perdiendo por 2 goles. El modelo acertó la clase, pero es un solo partido. En la temporada acierta el 83% de las victorias y solo el 20% de las derrotas: cuando avisa de una derrota casi siempre tiene razón, aunque avisa pocas.</p></div>';
+    }
+  },
+  {
+    id: "g_cruzazul", kind: "gol",
+    tag: "Gol en contra · análisis causal",
+    title: "Cruz Azul – América",
+    sit: "19 de mayo de 2025, minuto 56. Cruz Azul anota y América queda perdiendo. Aún quedan unos 35 minutos.",
+    stats: [["Minuto", "56"], ["Situación", "Perdiendo"], ["Cambios hechos", "0"], ["Tiempo restante", "~35 min"]],
+    statsNote: "",
+    ctx: { table: '<table><thead><tr><th>Hasta el minuto 56</th><th>América</th><th>Cruz Azul</th></tr></thead><tbody>' +
+      '<tr><td>xG acumulado</td><td>0.32</td><td>0.56</td></tr><tr><td>Tiros</td><td>5</td><td>2</td></tr>' +
+      '<tr><td>Field tilt</td><td>77%</td><td>23%</td></tr><tr><td>Min. 41-56: tiros / xG</td><td>0 / 0.00</td><td>1 / 0.11</td></tr></tbody></table>',
+      note: "Semifinal de vuelta del Clausura 2025. América dominaba el territorio (77%) pero sin ocasiones claras, y Cruz Azul anotó con un solo tiro de poco valor." },
+    q: "¿Haces un cambio de inmediato para reaccionar?",
+    opts: [
+      { t: "Sí, cambio inmediato (en los próximos 10 minutos)", v: "sin", why: "Sin respaldo estadístico: con 88 goles en contra analizados, el efecto de cambiar rápido no se distingue de cero." },
+      { t: "No, mantener y esperar", v: "sin", why: "Tampoco tiene respaldo: los datos no muestran que esperar sea mejor ni peor." },
+      { t: "Decidir por razones tácticas concretas (rival, físico, rol del jugador), no por el reloj", v: "ok", why: "Es lo que sí se sostiene: la urgencia por sí sola no aumenta la probabilidad de anotar, así que el cambio debe justificarse por lo que aporta." }
+    ],
+    evidence: function () {
+      var lo = -24.2, hi = 11.6, pt = -5.8, mn = -30, mx = 30;
+      function pos(x) { return ((x - mn) / (mx - mn) * 100).toFixed(2) + "%"; }
+      return '<div class="block"><h3>Efecto de cambiar rápido sobre anotar en 15 min</h3>' +
+        '<div class="cmp"><div class="stat"><span>Comparación ingenua</span><b>−8.6 pp</b></div><div class="stat"><span>Emparejado (situación × minuto)</span><b>−5.8 pp</b></div></div>' +
+        '<div class="ci" role="img" aria-label="Efecto emparejado -5.8 puntos porcentuales, intervalo 95% de -24.2 a 11.6"><div class="axis"></div><div class="zero"></div><div class="range" style="left:' + pos(lo) + ';width:' + ((hi - lo) / (mx - mn) * 100).toFixed(2) + '%"></div><div class="pt" style="left:' + pos(pt) + '"></div>' +
+        '<span class="lbl z" style="left:50%">0</span><span class="lbl" style="left:' + pos(lo) + '">−24.2</span><span class="lbl" style="left:' + pos(hi) + '">+11.6</span></div>' +
+        '<p class="note">Intervalo de confianza al 95% (bootstrap, 2000 remuestreos). Incluye el cero: no hay evidencia de efecto en ningún sentido. Se probaron 5 combinaciones de ventanas y en las cinco el intervalo incluye el cero.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>Tras el gol América hizo dos cambios al minuto 58, empató al 65 y ganó con un gol al 78: cambios en los 10 minutos siguientes y gol antes de 15 minutos. Es un caso a favor, pero es una anécdota: en el mismo tipo de situación (perdiendo, minuto 45-59) los cambios rápidos anotaron 22% frente a 9% sin cambio, y en los estratos de perdiendo en el minuto 15 y 30 la diferencia fue negativa.</p></div>' +
+        '<div class="block"><h3>Límites</h3><p class="note">Pocos eventos (27 con cambio), cambios planificados mezclados con reactivos, sin control por fuerza del rival ni tarjetas.</p></div>';
+    }
+  },
+  {
+    id: "b_corner85", kind: "balon",
+    tag: "Balón parado · patrones de la temporada",
+    title: "Córner a favor, minuto 85",
+    sit: "América pierde por un gol y cobra un córner en el minuto 85. Datos de los tres torneos de Jardine (129 partidos).",
+    stats: [["Córners analizados", "681"], ["Terminan en remate", "42.6%"], ["Tiro libre → remate", "18.7%"], ["Saque de banda → remate", "9.0%"]],
+    statsNote: "El 18.7% del tiro libre incluye reposiciones lejos del área, por eso no es comparable de forma directa con el córner.",
+    ctx: { table: '<table><thead><tr><th>Cuando América pierde por 1 desde el minuto 75</th><th>Dato</th></tr></thead><tbody>' +
+      '<tr><td>Partidos en esa situación</td><td>17 de 129</td></tr><tr><td>Córners cobrados desde el 75\'</td><td>34</td></tr>' +
+      '<tr><td>Córners que terminan en remate</td><td>50.0% (n = 34)</td></tr>' +
+      '<tr><td>Tiros por cada 10 min en el cierre</td><td>2.14</td></tr><tr><td>Tiros por cada 10 min, minutos 60-75 de todos los partidos</td><td>1.55</td></tr></tbody></table>',
+      note: "Al ir perdiendo el equipo sube el ritmo de tiros en el cierre (2.14 contra 1.55 por cada 10 minutos). El 50% de remate en 34 córners es más alto que el 42.6% de toda la temporada, pero con tan pocos casos la diferencia no es concluyente." },
+    q: "¿Cómo cobras el córner?",
+    opts: [
+      { t: "Centro al área, a rematar (envío cerrado hacia el punto penal)", v: "ok", why: "Respaldado: 42.6% de los córners de América terminan en remate, y el envío cerrado al punto penal es el patrón dominante (285 de 452 envíos identificados)." },
+      { t: "Jugada corta para recircular la posesión", v: "sin", why: "El análisis no midió el córner corto, así que no hay datos a favor ni en contra." },
+      { t: "Cobro rápido para sorprender", v: "sin", why: "Tampoco se midió el cobro rápido. No hay evidencia en este análisis." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Lo que muestran los datos</h3>' +
+        '<div class="cmp"><div class="stat"><span>xG en jugadas de córner a favor</span><b>25.79</b></div><div class="stat"><span>xG en contra tras córner</span><b>21.45</b></div></div>' +
+        '<p class="note">Margen +4.34 de xG. Los remates se concentran en el punto penal y el área chica, y los del rival también: el córner es la jugada de balón parado más peligrosa para ambos.</p></div>' +
+        '<div class="block"><h3>Límites</h3><p class="note">Son promedios de tres temporadas, sin condicionar a marcador ni minuto, y un remate no es un gol. No hay un resultado de partido concreto para este escenario; es una decisión que se evalúa con la tasa histórica.</p></div>';
+    }
+  },
+  {
+    id: "e_juarez", kind: "expulsion",
+    tag: "Expulsión · cómo reacciona Jardine",
+    title: "Juárez – América, visitante",
+    sit: "12 de julio de 2025, minuto 66. América gana 1-0 como visitante (gol de Zendejas al 38') y le expulsan a Erick Sánchez. Quedan unos 25 minutos con diez jugadores contra once.",
+    stats: [["Minuto", "66"], ["Marcador", "1 – 0 a favor"], ["Jugadores", "10 contra 11"], ["Tiempo restante", "~25 min"]],
+    statsNote: "",
+    ctx: { table: '<table><thead><tr><th>Del 45 al 66, once contra once</th><th>América</th><th>Juárez</th></tr></thead><tbody>' +
+      '<tr><td>Tiros</td><td>4</td><td>3</td></tr><tr><td>xG de Juárez</td><td></td><td>0.07</td></tr>' +
+      '<tr><td>Posesión</td><td>49%</td><td>51%</td></tr><tr><td>Field tilt</td><td>49%</td><td>51%</td></tr></tbody></table>',
+      note: "América ganaba 1-0 desde el 38' (gol de Zendejas) y el partido estaba parejo antes de la expulsión." },
+    q: "Te quedas con diez y ganas 1-0. ¿Qué haces?",
+    opts: [
+      { t: "Replegarse y cuidar el resultado: línea más baja y juego más directo", v: "ok", why: "Es lo que suele hacer el América de Jardine con un expulsado: en sus expulsiones propias la posesión baja 13.4 puntos, la línea defensiva 10.3 metros y los pases largos suben 26.5 puntos. Ojo: los datos describen qué hace, no prueban que sea lo mejor." },
+      { t: "Seguir presionando alto como si nada hubiera pasado", v: "sin", why: "Los datos no miden esta opción: en los casos analizados Jardine no la eligió, así que no hay comparación posible." },
+      { t: "Meter un delantero para ir por el segundo gol", v: "sin", why: "Tampoco se midió. No hay casos suficientes para saber si ir por el segundo gol con diez funciona mejor o peor." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Cómo cambia América con un expulsado (tres temporadas)</h3>' +
+        '<div class="cmp"><div class="stat"><span>Posesión</span><b>−13.4 pp</b></div><div class="stat"><span>Altura de la línea</span><b>−10.3 m</b></div><div class="stat"><span>Pases largos</span><b>+26.5 pp</b></div></div>' +
+        '<p class="note">Cambio medio tras la expulsión propia. Pocos casos: sirve para describir un patrón, no para probar que sea la mejor respuesta.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>Al descanso el modelo daba 75% de ganar; la expulsión llegó después, algo que el modelo no podía ver. América bajó de 4 tiros a 0 y de 49% a 42% de posesión; Juárez generó 6 tiros (xG 0.42), cambió al 70\' y empató al 79\'; América hizo cambios al 73\', 74\' y 83\'. Terminó 1-1. Es un solo partido: no prueba que otra decisión habría dado otro resultado.</p></div>';
+    }
+  }
+  ,{
+    id: "d_quer", kind: "descanso",
+    tag: "Descanso · modelo predictivo",
+    title: "América – Querétaro, local",
+    sit: "Torneo Apertura 2025, 10 de agosto. Medio tiempo: América gana 1-0 como local. Estas son sus cifras del primer tiempo.",
+    stats: [["Marcador", "1 – 0"], ["xG propio / rival", "1.07 / 0.01"], ["Posesión", "55.1%"], ["PPDA", "1.73"]],
+    statsNote: "PPDA bajo significa presionar mucho: 1.73 es el tercero más bajo de los 38 partidos de 2025/26.",
+    ctx: { table: '<table><thead><tr><th>Primer tiempo</th><th>Este partido</th><th>Media 2025/26</th></tr></thead><tbody>' +
+      '<tr><td>Tiros de América</td><td>7</td><td>6.6</td></tr><tr><td>Tiros del rival</td><td class="lo">2</td><td>5.0</td></tr>' +
+      '<tr><td>Field tilt relativo</td><td>78%</td><td>59%</td></tr><tr><td>xG de América</td><td>1.07</td><td>0.61</td></tr>' +
+      '<tr><td>xG del rival</td><td class="lo">0.01</td><td>0.47</td></tr></tbody></table>',
+      note: "La media es la de los 38 partidos de 2025/26 que el modelo no vio al entrenar. En este primer tiempo América generó mucho más xG que su media (1.07 contra 0.61) y el rival casi no generó." },
+    q: "Es el descanso. ¿Qué haces?",
+    opts: [
+      { t: "Mantener el planteamiento", v: "ok", why: "El modelo estima 2% de derrota. Con un primer tiempo así, los datos no piden un ajuste. Ojo: el modelo dice qué pasa si nada cambia, no que mantener sea lo mejor." },
+      { t: "Ajustar: presionar más arriba y subir el volumen ofensivo", v: "no", why: "El primer tiempo ya fue de mucha presión (PPDA 1.73) y mucho volumen. No hay señal de riesgo que justifique un ajuste." },
+      { t: "Cerrar el partido con un cambio defensivo", v: "no", why: "Con 87% de ganar y casi ningún peligro del rival, replegarse no tiene respaldo en el patrón de datos." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Lo que dice el modelo al descanso</h3>' +
+        '<div class="probbar" role="img" aria-label="Gana 86.6%, empata 11.6%, pierde 1.8%"><div class="pb-g" style="width:86.6%">Gana 86.6%</div><div class="pb-e" style="width:11.6%">12%</div><div class="pb-p" style="width:1.8%"></div></div>' +
+        '<p class="note">Gana 86.6% · Empata 11.6% · Pierde 1.8%. Es un partido verde del semáforo (riesgo de perder menor a 10%). Probado en 38 partidos que no vio, el modelo le da en promedio 43% de probabilidad a lo que ocurre; un modelo que solo repite el historial, 34%.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>América ganó 1-0: el marcador del descanso se mantuvo. El modelo acertó, pero es un solo partido y el modelo reparte probabilidades, no adivina.</p></div>';
+    }
+  }
+  ,{
+    id: "d_atlas", kind: "descanso",
+    tag: "Descanso · modelo predictivo",
+    title: "América – Atlas, local",
+    sit: "Torneo Clausura 2026, 26 de abril. Medio tiempo: 0-0 en casa. Estas son las cifras de América en el primer tiempo.",
+    stats: [["Marcador", "0 – 0"], ["xG propio / rival", "0.88 / 0.11"], ["Posesión", "53.2%"], ["PPDA", "5.59"]],
+    statsNote: "PPDA alto significa presionar poco: 5.59 es de los más altos de la temporada 2025/26 (el 34.º de 38).",
+    ctx: { table: '<table><thead><tr><th>Primer tiempo</th><th>Este partido</th><th>Media 2025/26</th></tr></thead><tbody>' +
+      '<tr><td>Tiros de América</td><td>5</td><td>6.6</td></tr><tr><td>Tiros del rival</td><td class="lo">2</td><td>5.0</td></tr>' +
+      '<tr><td>Field tilt relativo</td><td>62%</td><td>59%</td></tr><tr><td>xG de América</td><td>0.88</td><td>0.61</td></tr>' +
+      '<tr><td>xG del rival</td><td class="lo">0.11</td><td>0.47</td></tr></tbody></table>',
+      note: "La media es la de los 38 partidos de 2025/26 que el modelo no vio al entrenar. América generó más peligro que su media y el rival casi nada, aunque presionó poco." },
+    q: "Es el descanso. ¿Qué haces?",
+    opts: [
+      { t: "Mantener el planteamiento", v: "ok", why: "Es la lectura del modelo: 76% de ganar y 11% de perder, con xG 0.88 contra 0.11. Ojo: el riesgo de perder pasa apenas el 10%, así que el semáforo queda en amarillo, y el modelo no demuestra que mantener sea lo mejor." },
+      { t: "Ajustar: presionar más arriba y subir el volumen ofensivo", v: "no", why: "El modelo no ve un riesgo alto que justifique ajustar. Además, si ganar ya es lo más probable, subir el riesgo de una pérdida de balón no tiene respaldo en los datos." },
+      { t: "Cerrar el partido con un cambio defensivo", v: "no", why: "Con 0.88 de xG propio contra 0.11 del rival, el patrón no sostiene replegarse: el primer tiempo lo dominó América." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Lo que dice el modelo al descanso</h3>' +
+        '<div class="probbar" role="img" aria-label="Gana 76.4%, empata 12.1%, pierde 11.4%"><div class="pb-g" style="width:76.4%">Gana 76.4%</div><div class="pb-e" style="width:12.1%">12%</div><div class="pb-p" style="width:11.4%">11%</div></div>' +
+        '<p class="note">Gana 76.4% · Empata 12.1% · Pierde 11.4%. El semáforo queda en amarillo porque el riesgo de perder supera el 10%, aunque ganar es lo más probable. Probado en 38 partidos que no vio, el modelo le da en promedio 43% de probabilidad a lo que ocurre; un modelo que solo repite el historial, 34%.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>América perdió 0-1. El modelo daba 11% a esa derrota: algo que pasa más o menos una de cada nueve veces con ese riesgo. Es la razón por la que lo juzgamos en muchos partidos y no en uno solo.</p></div>';
+    }
+  }
+  ,{
+    id: "g_pachuca", kind: "gol",
+    tag: "Gol en contra · análisis causal",
+    title: "Pachuca – América",
+    sit: "18 de febrero de 2024, minuto 55. Pachuca anota y América, de visitante, queda perdiendo. Al descanso era 0-0. Aún quedan unos 35 minutos.",
+    stats: [["Minuto", "55"], ["Situación", "Perdiendo"], ["Localía", "Visitante"], ["Tiempo restante", "~35 min"]],
+    statsNote: "",
+    ctx: { table: '<table><thead><tr><th>Hasta el minuto 55</th><th>América</th><th>Pachuca</th></tr></thead><tbody>' +
+      '<tr><td>xG acumulado</td><td>0.18</td><td>0.31</td></tr><tr><td>Tiros</td><td>2</td><td>7</td></tr>' +
+      '<tr><td>Posesión</td><td>52%</td><td>48%</td></tr><tr><td>Field tilt</td><td class="lo">42%</td><td>58%</td></tr>' +
+      '<tr><td>Min. 45-55: tiros / xG</td><td>0 / 0.00</td><td>0 / 0.00</td></tr></tbody></table>',
+      note: "Su field tilt medio es 59%; hasta el gol América jugó mucho menos tiempo en campo rival que de costumbre. El partido estaba parejo y con pocas ocasiones: nadie había tirado desde el inicio del segundo tiempo." },
+    q: "¿Haces un cambio de inmediato para reaccionar?",
+    opts: [
+      { t: "Sí, cambio inmediato (en los próximos 10 minutos)", v: "sin", why: "Sin respaldo estadístico: con 88 goles en contra analizados, el efecto de cambiar rápido no se distingue de cero." },
+      { t: "No, mantener y esperar", v: "sin", why: "Tampoco tiene respaldo: los datos no muestran que esperar sea mejor ni peor." },
+      { t: "Decidir por razones tácticas concretas (rival, físico, rol del jugador), no por el reloj", v: "ok", why: "Es lo que sí se sostiene: la urgencia por sí sola no aumenta la probabilidad de anotar, así que el cambio debe justificarse por lo que aporta." }
+    ],
+    evidence: function () {
+      return causalBlock() +
+        '<div class="block"><h3>Lo que pasó</h3><p>América hizo su primer cambio al 64\' (a los 9 minutos del gol) y empató al 65\', pero Pachuca volvió a anotar al 75\' y terminó ganando 2-1. Es una anécdota: en el mismo tipo de situación (perdiendo, minuto 45-59) los cambios rápidos anotaron 22% (2 de 9) frente a 9% (1 de 11) sin cambio, con muy pocos casos.</p></div>' + causalLimits();
+    }
+  }
+  ,{
+    id: "g_monterrey", kind: "gol",
+    tag: "Gol en contra · análisis causal",
+    title: "América – Monterrey",
+    sit: "13 de diciembre de 2024, minuto 34. Monterrey anota y América, de local, queda perdiendo. Aún quedan unos 55 minutos.",
+    stats: [["Minuto", "34"], ["Situación", "Perdiendo"], ["Localía", "Local"], ["Tiempo restante", "~55 min"]],
+    statsNote: "",
+    ctx: { table: '<table><thead><tr><th>Hasta el minuto 34</th><th>América</th><th>Monterrey</th></tr></thead><tbody>' +
+      '<tr><td>xG acumulado</td><td>0.29</td><td>0.12</td></tr><tr><td>Tiros</td><td>2</td><td>3</td></tr>' +
+      '<tr><td>Posesión</td><td class="lo">42%</td><td>58%</td></tr><tr><td>Field tilt</td><td class="lo">44%</td><td>56%</td></tr>' +
+      '<tr><td>Min. 19-34: tiros / xG</td><td>0 / 0.00</td><td>1 / 0.02</td></tr></tbody></table>',
+      note: "Su posesión media es 51% y su field tilt medio 59%. América tuvo más peligro acumulado (0.29 contra 0.12 de xG), pero con poca posesión y poco territorio, sobre todo en los 15 minutos antes del gol (32% de field tilt)." },
+    q: "¿Haces un cambio de inmediato para reaccionar?",
+    opts: [
+      { t: "Sí, cambio inmediato (en los próximos 10 minutos)", v: "sin", why: "Sin respaldo estadístico: con 88 goles en contra analizados, el efecto de cambiar rápido no se distingue de cero." },
+      { t: "No, mantener y esperar", v: "sin", why: "Tampoco tiene respaldo: los datos no muestran que esperar sea mejor ni peor." },
+      { t: "Decidir por razones tácticas concretas (rival, físico, rol del jugador), no por el reloj", v: "ok", why: "Es lo que sí se sostiene: la urgencia por sí sola no aumenta la probabilidad de anotar, así que el cambio debe justificarse por lo que aporta." }
+    ],
+    evidence: function () {
+      return causalBlock() +
+        '<div class="block"><h3>Lo que pasó</h3><p>América no hizo cambios en los 10 minutos siguientes: el primero llegó al 62\' del segundo tiempo. Empató al 38\' (1-1 al descanso), anotó otra vez al 48\' y terminó ganando 2-1. Es otra anécdota: en el tramo de perdiendo entre el minuto 30 y 44, ninguno de los 5 casos con cambio rápido anotó en 15 minutos, contra 3 de 7 sin cambio. Con tan pocos casos, tampoco prueba que esperar sea mejor.</p></div>' + causalLimits();
+    }
+  }
+  ,{
+    id: "b_corner_rival", kind: "balon",
+    tag: "Balón parado · patrones de la temporada",
+    title: "Córner del rival, minuto 80",
+    sit: "América gana por un gol y el rival cobra un córner en el minuto 80. Datos de los tres torneos de Jardine (129 partidos).",
+    stats: [["Córners del rival", "571"], ["Terminan en remate", "46.8%"], ["Goles tras córner rival", "18"], ["Remates desde el punto penal y el área chica", "62%"]],
+    statsNote: "El córner del rival termina en remate más seguido (46.8%) que el de América (42.6%).",
+    ctx: { table: '<table><thead><tr><th>Córners del rival, según el marcador</th><th>Córners</th><th>Terminan en remate</th></tr></thead><tbody>' +
+      '<tr><td>América gana</td><td>228</td><td>47.8%</td></tr><tr><td>Empate</td><td>271</td><td>44.6%</td></tr>' +
+      '<tr><td>América pierde</td><td>72</td><td>51.4%</td></tr><tr><td>Desde el minuto 75</td><td>139</td><td>49.6%</td></tr></tbody></table>',
+      note: "Son 267 remates del rival tras córner: 47% salen de la zona del punto penal y 16% del área chica. El xG que América concede tras córner es 21.45 en tres torneos." },
+    q: "¿Cómo defiendes el córner?",
+    opts: [
+      { t: "Reforzar el punto penal y el área chica, donde salen 6 de cada 10 remates del rival", v: "ok", why: "Respaldado: el 62% de los remates del rival tras córner salen de esas dos zonas (47% del punto penal y 16% del área chica). Ojo: los datos describen dónde remata el rival, no miden qué sistema de marca funciona mejor." },
+      { t: "Dejar dos jugadores arriba para salir al contragolpe", v: "sin", why: "No se midió: el análisis no registra cuántos jugadores deja América arriba ni qué pasa después del córner." },
+      { t: "Cambiar a marca al hombre en vez de zona", v: "sin", why: "Tampoco se midió el sistema de marca. No hay evidencia a favor ni en contra en este análisis." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Lo que muestran los datos</h3>' +
+        '<div class="cmp"><div class="stat"><span>Goles recibidos tras córner</span><b>18</b></div><div class="stat"><span>Goles de América tras córner</span><b>22</b></div></div>' +
+        '<p class="note">El rival remata tras córner en 46.8% de los casos y América en 42.6%; en xG, 21.45 contra 25.79 a favor de América. El córner es la jugada de balón parado más peligrosa para ambos.</p></div>' +
+        '<div class="block"><h3>Límites</h3><p class="note">Son promedios de tres temporadas y un remate no es un gol. No hay un partido concreto para este escenario: se evalúa con la tasa histórica.</p></div>';
+    }
+  }
+  ,{
+    id: "b_corner_tecnica", kind: "balon",
+    tag: "Balón parado · patrones de la temporada",
+    title: "Córner a favor, minuto 25, 0-0",
+    sit: "América y el rival empatan 0-0 y América cobra un córner en el minuto 25. Datos de los tres torneos de Jardine (129 partidos).",
+    stats: [["Córners analizados", "681"], ["Terminan en remate", "42.6%"], ["Con el marcador empatado", "38.7%"], ["En los primeros 30 minutos", "41.1%"]],
+    statsNote: "Con ventaja o en contra, América remata más tras córner: 46.3% y 46.9%, contra 38.7% si el marcador está empatado.",
+    ctx: { table: '<table><thead><tr><th>Técnica del envío</th><th>Córners</th><th>Terminan en remate</th><th>xG por córner</th></tr></thead><tbody>' +
+      '<tr><td>Cerrado (inswinger)</td><td>285</td><td>40.0%</td><td>0.037</td></tr><tr><td>Abierto (outswinger)</td><td>154</td><td>48.1%</td><td>0.041</td></tr></tbody></table>',
+      note: "Hay otros 229 córners sin técnica registrada y 13 rectos. El cerrado es el patrón dominante (285 de 452 envíos identificados)." },
+    q: "¿Cómo botas el córner?",
+    opts: [
+      { t: "Envío cerrado hacia el punto penal, como lo hace más seguido", v: "ok", why: "Respaldado: es el patrón dominante de América y 40.0% de esos córners terminan en remate, con 0.037 de xG por córner." },
+      { t: "Envío abierto, que se aleja de la portería", v: "ok", why: "También respaldado: 48.1% de esos córners terminan en remate y 0.041 de xG por córner. Con 154 casos la diferencia con el cerrado (8 puntos de remate, poca diferencia de xG) no es concluyente." },
+      { t: "Jugada corta para recircular la posesión", v: "sin", why: "El análisis no midió el córner corto, así que no hay datos a favor ni en contra." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Lo que muestran los datos</h3>' +
+        '<div class="cmp"><div class="stat"><span>Remate por córner, cerrado</span><b>40.0%</b></div><div class="stat"><span>Remate por córner, abierto</span><b>48.1%</b></div></div>' +
+        '<p class="note">En xG por córner la diferencia es pequeña (0.037 contra 0.041). Aquí no hay una sola forma de cobrar bien: los dos envíos tienen respaldo y los datos no alcanzan para decidir entre ellos.</p></div>' +
+        '<div class="block"><h3>Límites</h3><p class="note">Son promedios de tres temporadas, sin separar rival ni jugador que cobra, y un remate no es un gol. No hay un resultado de partido concreto para este escenario.</p></div>';
+    }
+  }
+  ,{
+    id: "e_sanluis", kind: "expulsion",
+    tag: "Expulsión · cómo reacciona Jardine",
+    title: "América – Atlético San Luis, local",
+    sit: "15 de enero de 2026, minuto 19. América y San Luis empatan 0-0 y le expulsan a un jugador a América. Quedan unos 70 minutos con diez jugadores contra once.",
+    stats: [["Minuto", "19"], ["Marcador", "0 – 0"], ["Jugadores", "10 contra 11"], ["Tiempo restante", "~70 min"]],
+    statsNote: "Es una expulsión temprana: solo 2 de las 9 expulsiones propias de América en tres temporadas llegaron antes del minuto 60.",
+    ctx: { table: '<table><thead><tr><th>Hasta el minuto 19</th><th>América</th><th>San Luis</th></tr></thead><tbody>' +
+      '<tr><td>Tiros</td><td>2</td><td>2</td></tr><tr><td>xG acumulado</td><td>0.10</td><td>0.06</td></tr>' +
+      '<tr><td>Posesión</td><td>61%</td><td>39%</td></tr><tr><td>Field tilt</td><td>58%</td><td>42%</td></tr>' +
+      '<tr><td>Pases</td><td>167</td><td>102</td></tr></tbody></table>',
+      note: "Antes de la expulsión América tenía el balón y el partido estaba parejo: pocos tiros de ambos lados. Su field tilt medio en los 129 partidos es 59%." },
+    q: "Te quedas con diez en el minuto 19 con 0-0. ¿Qué haces?",
+    opts: [
+      { t: "Replegarse y cuidar el resultado: línea más baja y juego más directo", v: "ok", why: "Es lo que suele hacer el América de Jardine con un expulsado: en sus expulsiones propias la posesión baja 13.4 puntos, la línea defensiva 10.3 metros y los pases largos suben 26.5 puntos. Ojo: los datos describen qué hace, no prueban que sea lo mejor, y con una expulsión tan temprana casi no hay casos comparables." },
+      { t: "Seguir presionando alto como si nada hubiera pasado", v: "sin", why: "Los datos no miden esta opción: en los casos analizados Jardine no la eligió, así que no hay comparación posible." },
+      { t: "Meter un delantero para ir por el gol", v: "sin", why: "Tampoco se midió. No hay casos suficientes para saber si ir por el gol con diez funciona mejor o peor." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Cómo cambia América con un expulsado (tres temporadas)</h3>' +
+        '<div class="cmp"><div class="stat"><span>Posesión</span><b>−13.4 pp</b></div><div class="stat"><span>Altura de la línea</span><b>−10.3 m</b></div><div class="stat"><span>Pases largos</span><b>+26.5 pp</b></div></div>' +
+        '<p class="note">Cambio medio tras la expulsión propia, con 9 casos. Sirve para describir un patrón, no para probar que sea la mejor respuesta.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>América perdió 0-2 en casa. Es un solo partido: no prueba que otra decisión habría dado otro resultado. La otra expulsión propia tan temprana, en el minuto 10 contra Necaxa en enero de 2024, terminó 0-0, con una expulsión también para el rival a los 21 minutos.</p></div>';
+    }
+  }
+  ,{
+    id: "e_santos", kind: "expulsion",
+    tag: "Expulsión · cómo reacciona Jardine",
+    title: "América – Santos Laguna, local",
+    sit: "20 de octubre de 2024, minuto 57. América y Santos Laguna empatan 0-0 y le expulsan a un jugador a Santos. Quedan unos 35 minutos con once jugadores contra diez.",
+    stats: [["Minuto", "57"], ["Marcador", "0 – 0"], ["Jugadores", "11 contra 10"], ["Tiempo restante", "~35 min"]],
+    statsNote: "Las expulsiones a favor son más frecuentes: América tuvo 27 en tres temporadas, contra 9 expulsiones propias.",
+    ctx: { table: '<table><thead><tr><th>Hasta el minuto 57</th><th>América</th><th>Santos</th></tr></thead><tbody>' +
+      '<tr><td>Tiros</td><td>10</td><td>6</td></tr><tr><td>xG acumulado</td><td>0.80</td><td>0.16</td></tr>' +
+      '<tr><td>Posesión</td><td>70%</td><td>30%</td></tr><tr><td>Field tilt</td><td>88%</td><td>12%</td></tr>' +
+      '<tr><td>Min. 42-57: tiros / xG</td><td>3 / 0.11</td><td>0 / 0.00</td></tr></tbody></table>',
+      note: "América dominaba el partido (70% de posesión, 88% de field tilt) pero con poco peligro por tiro: 0.80 de xG con 10 tiros. Su field tilt medio es 59%." },
+    q: "El rival se queda con diez y siguen 0-0. ¿Qué haces?",
+    opts: [
+      { t: "Controlar el balón y subir la línea para ir sobre el área rival", v: "ok", why: "Es lo que suele hacer el América de Jardine con un jugador de más: en sus 27 casos la posesión sube 12.8 puntos y la línea defensiva sube 11.9 metros. Ojo: los datos describen qué hace, no prueban que sea lo mejor." },
+      { t: "Acelerar al máximo: presionar con todos para sentenciar pronto", v: "sin", why: "Los datos no miden esta opción: en los casos analizados Jardine controló la posesión, no aceleró. La tasa de tiros apenas sube (+0.2 por 10 minutos)." },
+      { t: "Cuidar el empate: mantener el bloque medio como antes", v: "sin", why: "Tampoco se midió. No hay casos suficientes para saber si ignorar la superioridad numérica funciona mejor o peor." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Cómo cambia América con un jugador de más (tres temporadas)</h3>' +
+        '<div class="cmp"><div class="stat"><span>Posesión</span><b>+12.8 pp</b></div><div class="stat"><span>Altura de la línea</span><b>+11.9 m</b></div><div class="stat"><span>Tiros</span><b>+0.2 por 10 min</b></div></div>' +
+        '<p class="note">Cambio medio tras la expulsión al rival, con 27 casos. La posesión y la línea suben mucho; la tasa de tiros casi no cambia.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>América ganó 3-0: los tres goles llegaron después de la expulsión. Es un solo partido: no prueba que controlar el balón sea mejor que otra opción.</p></div>';
+    }
+  }
+];
+
+function causalBlock() {
+  var lo = -24.2, hi = 11.6, pt = -5.8, mn = -30, mx = 30;
+  function pos(x) { return ((x - mn) / (mx - mn) * 100).toFixed(2) + "%"; }
+  return '<div class="block"><h3>Efecto de cambiar rápido sobre anotar en 15 min</h3>' +
+    '<div class="cmp"><div class="stat"><span>Comparación ingenua</span><b>−8.6 pp</b></div><div class="stat"><span>Emparejado (situación × minuto)</span><b>−5.8 pp</b></div></div>' +
+    '<div class="ci" role="img" aria-label="Efecto emparejado -5.8 puntos porcentuales, intervalo 95% de -24.2 a 11.6"><div class="axis"></div><div class="zero"></div><div class="range" style="left:' + pos(lo) + ';width:' + ((hi - lo) / (mx - mn) * 100).toFixed(2) + '%"></div><div class="pt" style="left:' + pos(pt) + '"></div>' +
+    '<span class="lbl z" style="left:50%">0</span><span class="lbl" style="left:' + pos(lo) + '">−24.2</span><span class="lbl" style="left:' + pos(hi) + '">+11.6</span></div>' +
+    '<p class="note">Intervalo de confianza al 95% (bootstrap, 2000 remuestreos). Incluye el cero: no hay evidencia de efecto en ningún sentido. Se probaron 5 combinaciones de ventanas y en las cinco el intervalo incluye el cero.</p></div>';
+}
+function causalLimits() {
+  return '<div class="block"><h3>Límites</h3><p class="note">Pocos eventos (27 con cambio), cambios planificados mezclados con reactivos, sin control por fuerza del rival ni tarjetas.</p></div>';
+}
+
+/* Cada vez que se pulsa Comenzar se sortea un escenario de cada tipo del banco (12 en total) */
+var KINDS = ["descanso", "gol", "balon", "expulsion"], DRILLS = [], lastPick = {};
+function pickRun() {
+  DRILLS = KINDS.map(function (k) {
+    var pool = BANK.filter(function (d) { return d.kind === k; });
+    var fresh = pool.filter(function (d) { return d.id !== lastPick[k]; });
+    var d = (fresh.length ? fresh : pool)[Math.floor(Math.random() * (fresh.length ? fresh.length : pool.length))];
+    lastPick[k] = d.id; return d;
+  });
+}
+pickRun();
+
+var state = { i: -1, answers: [], t0: 0, tick: null, elapsed: 0, locked: false };
+var app = document.getElementById("app");
+
+function fmt(s) { var m = Math.floor(s / 60), r = s % 60; return m + ":" + (r < 10 ? "0" : "") + r; }
+function steps() {
+  var h = '<div class="steps" aria-hidden="true">';
+  for (var k = 0; k < DRILLS.length; k++) h += '<i class="' + (k < state.answers.length ? "done" : (k === state.i ? "now" : "")) + '"></i>';
+  return h + "</div>";
+}
+function timerHtml() {
+  var over = state.elapsed > LIMIT;
+  return '<div class="timer' + (over ? " over" : "") + '" id="timer"><b>' + fmt(state.elapsed) + '</b><span>de ' + fmt(LIMIT) + ' sugeridos</span></div>';
+}
+function startTimer() {
+  state.t0 = Date.now() - state.elapsed * 1000;
+  clearInterval(state.tick);
+  state.tick = setInterval(function () {
+    state.elapsed = Math.floor((Date.now() - state.t0) / 1000);
+    var el = document.getElementById("timer");
+    if (el) { el.outerHTML = timerHtml(); }
+  }, 250);
+}
+function stopTimer() { clearInterval(state.tick); }
+
+function renderIntro() {
+  app.innerHTML =
+    '<div class="top"><div><p class="eyebrow">Hackathon ISAC 2026 · Club América</p><h1>Coach Drills</h1></div></div>' +
+    '<div class="card"><p class="situation">Cuatro decisiones de banca, cada una con datos reales de André Jardine en América. Cada vez que pulsas Comenzar se sortean cuatro de 12 escenarios reales: elige, mira qué respalda la evidencia y compárala con lo que pasó.</p>' +
+    '<ul class="list"><li><b>Descanso:</b> qué dice el modelo predictivo.</li><li><b>Gol en contra:</b> qué dice el análisis causal.</li><li><b>Balón parado:</b> qué dicen los patrones de córner.</li><li><b>Expulsión:</b> cómo reacciona Jardine cuando se queda con diez o cuando el rival se queda con diez.</li></ul>' +
+    '<p class="note">Meta: terminar las cuatro en 240 segundos. Puedes responder con las teclas 1, 2 y 3. El cronómetro empieza al pulsar Comenzar.</p>' +
+    '<button class="btn" id="go">Comenzar</button></div>' +
+    '<p class="foot">Datos: StatsBomb, 129 partidos de América con Jardine (2023-2026). Modelo y análisis en los notebooks 08 y 09.</p>';
+  document.getElementById("go").onclick = function () { pickRun(); state.i = 0; state.answers = []; state.elapsed = 0; startTimer(); renderDrill(); };
+}
+
+function renderDrill() {
+  var d = DRILLS[state.i];
+  var h = '<div class="top"><div><p class="eyebrow">Decisión ' + (state.i + 1) + ' de ' + DRILLS.length + ' · ' + d.tag + '</p><h2>' + d.title + '</h2></div>' + timerHtml() + '</div>' + steps();
+  h += '<div class="card"><p class="situation">' + d.sit + '</p><div class="stats">';
+  d.stats.forEach(function (s) { h += '<div class="stat"><span>' + s[0] + '</span><b>' + s[1] + '</b></div>'; });
+  h += '</div>' + (d.statsNote ? '<p class="note">' + d.statsNote + '</p>' : '') + (d.ctx ? '<div class="ctx"><h3>Contexto y momentum</h3><div class="tw">' + d.ctx.table + '</div><p class="note">' + d.ctx.note + '</p></div>' : '') + '<p class="question">' + d.q + '</p><div class="opts" id="opts">';
+  d.opts.forEach(function (o, k) { h += '<button class="opt" data-k="' + k + '"><kbd>' + (k + 1) + '</kbd><span>' + o.t + '</span></button>'; });
+  h += '</div><div class="reveal" id="reveal" hidden></div></div>';
+  app.innerHTML = h;
+  state.locked = false;
+  document.querySelectorAll(".opt").forEach(function (b) { b.onclick = function () { choose(+b.dataset.k); }; });
+}
+
+function choose(k) {
+  if (state.locked) return;
+  state.locked = true;
+  var d = DRILLS[state.i], o = d.opts[k];
+  state.answers.push({ i: state.i, k: k, v: o.v });
+  document.querySelectorAll(".opt").forEach(function (b) { b.disabled = true; if (+b.dataset.k === k) b.classList.add("picked"); });
+  var label = { ok: "Respaldada por los datos", sin: "Sin respaldo en los datos", no: "Los datos no la respaldan" }[o.v];
+  var last = state.i === DRILLS.length - 1;
+  var r = document.getElementById("reveal");
+  r.innerHTML = '<span class="verdict ' + o.v + '">' + label + '</span><p>' + o.why + '</p>' + d.evidence() +
+    '<button class="btn" id="next">' + (last ? "Ver resultado" : "Siguiente decisión") + '</button>';
+  r.hidden = false;
+  document.getElementById("next").onclick = function () { if (last) { stopTimer(); renderEnd(); } else { state.i++; renderDrill(); window.scrollTo(0, 0); } };
+  document.getElementById("next").focus({ preventScroll: true });
+  r.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function renderEnd() {
+  var ok = state.answers.filter(function (a) { return a.v === "ok"; }).length;
+  var sin = state.answers.filter(function (a) { return a.v === "sin"; }).length;
+  var inTime = state.elapsed <= LIMIT;
+  app.innerHTML =
+    '<div class="top"><div><p class="eyebrow">Resultado</p><h2>Tus cuatro decisiones</h2></div></div>' +
+    '<div class="card"><div class="sum-grid"><div class="stat"><span>Respaldadas por datos</span><b>' + ok + ' de ' + DRILLS.length + '</b></div>' +
+    '<div class="stat"><span>Sin respaldo disponible</span><b>' + sin + '</b></div>' +
+    '<div class="stat"><span>Tiempo</span><b>' + fmt(state.elapsed) + (inTime ? '' : ' (pasó de ' + fmt(LIMIT) + ')') + '</b></div></div>' +
+    '<div class="block"><h3>Qué muestra esta herramienta</h3><ul class="list">' +
+    '<li>El modelo al descanso sí ordena los partidos por riesgo, pero no prueba que un ajuste funcione.</li>' +
+    '<li>Reaccionar rápido a un gol en contra no tiene efecto demostrable sobre anotar pronto: es un resultado nulo, reportado con su incertidumbre.</li>' +
+    '<li>El córner es el balón parado más productivo de América, también para el rival.</li><li>Con diez jugadores, América se repliega y con un jugador más controla el balón: los datos describen el patrón, no prueban que sea lo mejor.</li></ul></div>' +
+    '<div class="block"><h3>Qué no puede decirte</h3><p class="note">Un partido no valida una regla. Los análisis usan 129 partidos de un solo entrenador, y el modelo se probó con 38. Úsalo para ordenar la discusión del cuerpo técnico, no para reemplazarla.</p></div>' +
+    '<button class="btn ghost" id="again">Repetir con otros escenarios</button></div>';
+  document.getElementById("again").onclick = function () { pickRun(); state.i = 0; state.answers = []; state.elapsed = 0; startTimer(); renderDrill(); window.scrollTo(0, 0); };
+}
+
+document.addEventListener("keydown", function (e) {
+  if (state.i < 0 || state.locked) return;
+  var n = parseInt(e.key, 10);
+  if (n >= 1 && n <= 3 && document.getElementById("opts")) choose(n - 1);
+});
+renderIntro();
+</script>

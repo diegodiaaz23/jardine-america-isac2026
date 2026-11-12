@@ -1,0 +1,1162 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ISAC 2026 HACKATON DIEGO DÍAZ Y EMILIANO CHAIN RUIZ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: documento de una columna con índice por criterio; gráficos SVG propios; los drills interactivos van incrustados en la sección de interpretabilidad. */
+:root {
+  --bg: #F2F4F8; --surface: #FFFFFF; --surface-2: #E9EDF4; --fg: #0D1A2D; --muted: #55637A; --line: #CFD6E2;
+  --navy: #0B2F6B; --navy-fg: #FFFFFF; --gold: #E8A800; --gold-soft: #FFF1C2;
+  --ok: #1B6B45; --ok-soft: #DDF1E6; --warn: #8A5A00; --warn-soft: #FFEBC7; --bad: #A5322A; --bad-soft: #F8DEDB;
+  --neutral: #6B7788;
+  --k1: #E8A800; --k2: #1F5FBF; --k3: #8A3FA0; --k4: #0E8A7D;
+  --f-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1322; --surface: #111E35; --surface-2: #192A47; --fg: #E8EDF6; --muted: #94A2BA; --line: #26385A;
+    --navy: #7DA7FF; --navy-fg: #0A1322; --gold: #F5C518; --gold-soft: #3A3010;
+    --ok: #62D39A; --ok-soft: #12382A; --warn: #F2B84B; --warn-soft: #3A2A0C; --bad: #FF8A80; --bad-soft: #3F1A18; --neutral: #8C98AB; --k1: #F5C518; --k2: #7DA7FF; --k3: #C79BEB; --k4: #4FD1C0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A1322; --surface: #111E35; --surface-2: #192A47; --fg: #E8EDF6; --muted: #94A2BA; --line: #26385A;
+  --navy: #7DA7FF; --navy-fg: #0A1322; --gold: #F5C518; --gold-soft: #3A3010;
+  --ok: #62D39A; --ok-soft: #12382A; --warn: #F2B84B; --warn-soft: #3A2A0C; --bad: #FF8A80; --bad-soft: #3F1A18; --neutral: #8C98AB; --k1: #F5C518; --k2: #7DA7FF; --k3: #C79BEB; --k4: #4FD1C0;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.6;
+  padding-block: 0 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 700; text-wrap: balance; margin: 0; line-height: 1.05; letter-spacing: .01em; }
+h1 { font-size: clamp(2.6rem, 8vw, 4.2rem); }
+h2 { font-size: clamp(1.9rem, 5vw, 2.5rem); }
+h3 { font-size: 1.05rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+a { color: var(--navy); }
+.eyebrow { font-family: var(--f-data); font-size: .76rem; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+header.hero { padding-top: 48px; display: flex; flex-direction: column; gap: 20px; }
+.lead { font-size: 1.2rem; max-width: 62ch; }
+nav.toc { display: flex; flex-wrap: wrap; gap: 8px; }
+nav.toc a { font-size: .85rem; text-decoration: none; border: 1.5px solid var(--line); background: var(--surface); color: var(--fg); padding: 6px 12px; border-radius: 6px; }
+nav.toc a b { font-family: var(--f-data); font-weight: 500; color: var(--muted); margin-left: 6px; font-size: .78rem; }
+nav.toc a:hover { border-color: var(--navy); }
+section { display: flex; flex-direction: column; gap: 20px; min-width: 0; scroll-margin-top: 16px; }
+.sechead { display: flex; flex-direction: column; gap: 8px; border-top: 3px solid var(--navy); padding-top: 14px; }
+.weight { font-family: var(--f-data); font-size: .8rem; color: var(--muted); }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tile span { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.tile b { font-family: var(--f-data); font-weight: 500; font-size: 1.45rem; font-variant-numeric: tabular-nums; }
+.tile small { font-size: .78rem; color: var(--muted); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; white-space: normal; }
+th { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 500; }
+tr.hl td { background: var(--gold-soft); font-weight: 600; }
+.note { font-size: .88rem; color: var(--muted); max-width: 68ch; }
+.callout { background: var(--gold-soft); border-radius: 8px; padding: 14px 16px; max-width: 68ch; }
+.callout b { font-weight: 600; }
+.list { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 6px; max-width: 68ch; }
+.minis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.mini { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.mini span { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.mini svg { width: 100%; height: auto; display: block; }
+svg text { font-family: var(--f-data); font-size: 11px; fill: var(--muted); }
+svg text.v { fill: var(--fg); font-weight: 500; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-size: .85rem; border: 1.5px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 6px; padding: 6px 12px; cursor: pointer; min-height: 36px; }
+.chip[aria-pressed="true"] { background: var(--navy); color: var(--navy-fg); border-color: var(--navy); }
+.chip:focus-visible, .btn:focus-visible, .opt:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.sem { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+.light { border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+.light.g { background: var(--ok-soft); color: var(--ok); } .light.r { background: var(--bad-soft); color: var(--bad); } .light.y { background: var(--warn-soft); color: var(--warn); }
+.light b { font-family: var(--f-data); font-size: 1.5rem; font-weight: 500; }
+.light span { font-size: .8rem; text-transform: uppercase; letter-spacing: .07em; font-weight: 600; }
+.light small { color: var(--fg); font-size: .85rem; }
+.games { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); max-height: 520px; overflow-y: auto; }
+.game { display: grid; grid-template-columns: 1fr minmax(120px, 1.4fr) auto; gap: 12px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); font-size: .86rem; }
+.game:last-child { border-bottom: 0; }
+.game .who { min-width: 0; } .game .who b { font-weight: 600; display: block; overflow-wrap: anywhere; } .game .who small { color: var(--muted); font-family: var(--f-data); font-size: .74rem; }
+.pbar { display: flex; height: 18px; border-radius: 4px; overflow: hidden; min-width: 0; }
+.pbar i { display: block; height: 100%; }
+.pb-g, .pg { background: #1B6B45; } .pb-e { background: #6B7788; } .pb-p { background: #A5322A; } .pe { background: #6B7788; } .pp { background: #A5322A; }
+.res { font-family: var(--f-data); font-size: .76rem; font-weight: 500; padding: 3px 8px; border-radius: 4px; text-align: center; min-width: 64px; }
+.res.Gana { background: var(--ok-soft); color: var(--ok); } .res.Empata { background: var(--surface-2); color: var(--muted); } .res.Pierde { background: var(--bad-soft); color: var(--bad); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .8rem; color: var(--muted); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+.kchips { display: flex; flex-wrap: wrap; gap: 8px; }
+.kchip { font: inherit; font-size: .85rem; border: 1.5px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 6px; padding: 6px 12px; cursor: pointer; min-height: 36px; display: inline-flex; align-items: center; gap: 8px; }
+.kchip i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.kchip[aria-pressed="true"] { border-color: var(--fg); background: var(--surface-2); }
+.kchip:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.mrow { display: grid; grid-template-columns: minmax(120px, 190px) 1fr; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.mrow:last-child { border-bottom: 0; }
+.mrow .ml { font-size: .88rem; font-weight: 500; min-width: 0; } .mrow .ml small { display: block; color: var(--muted); font-weight: 400; font-size: .76rem; }
+.mrow svg { width: 100%; height: 30px; display: block; overflow: visible; }
+.mrow .vals { margin-top: 8px; display: flex; gap: 12px; flex-wrap: wrap; font-family: var(--f-data); font-size: .74rem; font-variant-numeric: tabular-nums; }
+.dim { opacity: .35; }
+.cbar { display: grid; grid-template-columns: minmax(110px, 160px) 1fr auto; gap: 10px; align-items: center; font-size: .86rem; padding: 4px 0; }
+.cbar .tr { height: 16px; background: var(--surface-2); border-radius: 4px; overflow: hidden; } .cbar .tr i { display: block; height: 100%; }
+.cbar .cn { grid-column: 2 / -1; margin-top: -4px; font-size: .74rem; color: var(--muted); }
+.tug { display: flex; height: 22px; margin-top: 10px; border-radius: 5px; overflow: hidden; background: #3F8CF0; font-family: var(--f-data); font-size: .78rem; color: #fff; }
+.tug i { display: flex; align-items: center; padding-left: 8px; background: #E5221B; font-style: normal; } .tug b { font-weight: 600; }
+.tug span { margin-left: auto; padding-right: 8px; align-self: center; }
+.tugl { display: flex; justify-content: space-between; font-size: .7rem; color: var(--muted); margin-top: 2px; }
+.cbar b { font-family: var(--f-data); font-weight: 500; font-size: .8rem; min-width: 84px; text-align: right; }
+@media (max-width: 560px) { .mrow { grid-template-columns: 1fr; gap: 4px; } .cbar { grid-template-columns: 1fr auto; } .cbar .tr { grid-column: 1 / -1; order: 3; } }
+/* drills */
+.drill { display: flex; flex-direction: column; gap: 16px; }
+.dtop { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.timer { font-family: var(--f-data); font-variant-numeric: tabular-nums; text-align: right; }
+.timer b { font-size: 1.7rem; font-weight: 500; display: block; line-height: 1; } .timer span { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.timer.over b { color: var(--bad); }
+.steps { display: flex; gap: 6px; } .steps i { flex: 1; height: 6px; border-radius: 3px; background: var(--line); } .steps i.done { background: var(--navy); } .steps i.now { background: var(--gold); }
+.situation { font-size: 1.05rem; font-weight: 500; max-width: 68ch; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.stat { background: var(--surface-2); border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.stat span { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.stat b { font-family: var(--f-data); font-weight: 500; font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+.question { font-family: var(--f-display); font-size: 1.45rem; font-weight: 600; line-height: 1.15; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { font: inherit; text-align: left; color: var(--fg); background: var(--surface); border: 1.5px solid var(--line); border-radius: 8px; padding: 12px 14px; cursor: pointer; display: flex; gap: 12px; align-items: baseline; min-height: 48px; }
+.opt kbd { font-family: var(--f-data); font-size: .8rem; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; flex: none; }
+.opt:hover:not(:disabled) { border-color: var(--navy); } .opt:disabled { cursor: default; } .opt.picked { border-color: var(--navy); background: var(--surface-2); }
+.btn { font: inherit; font-weight: 600; background: var(--navy); color: var(--navy-fg); border: 0; border-radius: 8px; padding: 12px 20px; cursor: pointer; align-self: flex-start; min-height: 48px; }
+.btn.ghost { background: transparent; color: var(--fg); border: 1.5px solid var(--line); }
+.reveal { display: flex; flex-direction: column; gap: 16px; border-top: 1px dashed var(--line); padding-top: 16px; } .reveal[hidden] { display: none; }
+.verdict { display: inline-flex; font-weight: 600; padding: 6px 12px; border-radius: 6px; align-self: flex-start; font-size: .95rem; }
+.verdict.ok { background: var(--ok-soft); color: var(--ok); } .verdict.sin { background: var(--warn-soft); color: var(--warn); } .verdict.no { background: var(--bad-soft); color: var(--bad); }
+.block { display: flex; flex-direction: column; gap: 6px; }
+.probbar { display: flex; height: 30px; border-radius: 6px; overflow: hidden; font-family: var(--f-data); font-size: .8rem; }
+.probbar div { display: flex; align-items: center; justify-content: center; color: #fff; overflow: hidden; }
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ci { position: relative; height: 54px; margin: 6px 0 2px; }
+.ci .axis { position: absolute; left: 0; right: 0; top: 24px; height: 2px; background: var(--line); }
+.ci .zero { position: absolute; top: 10px; bottom: 6px; width: 2px; background: var(--fg); left: 50%; }
+.ci .range { position: absolute; top: 20px; height: 10px; border-radius: 5px; background: var(--gold); }
+.ci .pt { position: absolute; top: 16px; width: 4px; height: 18px; background: var(--navy); border-radius: 2px; }
+.ci .lbl { position: absolute; top: 38px; font-family: var(--f-data); font-size: .72rem; color: var(--muted); transform: translateX(-50%); white-space: nowrap; } .ci .lbl.z { top: -4px; color: var(--fg); }
+footer { font-size: .8rem; color: var(--muted); font-family: var(--f-data); display: flex; flex-direction: column; gap: 4px; }
+@media (max-width: 560px) { .game { grid-template-columns: 1fr auto; } .game .pbar { grid-column: 1 / -1; order: 3; } }
+@media (prefers-reduced-motion: no-preference) { .reveal { animation: in .25s ease-out; } @keyframes in { from { opacity: 0; transform: translateY(6px); } } }
+.rec-team{display:flex;flex-direction:column;gap:8px}.rec-team h4{margin:0;font-family:var(--f-display);font-size:1.25rem;letter-spacing:.02em}.rec-team h4 small{font-family:var(--f-data);font-size:.74rem;color:var(--muted);font-weight:400;letter-spacing:0;margin-left:6px}
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:8px}
+.rec-c{border:1.5px solid var(--line);background:var(--surface-2);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.rec-c span{font-family:var(--f-data);font-size:.72rem;color:var(--muted)}.rec-c b{font-size:.92rem;line-height:1.2}.rec-c small{font-size:.74rem;color:var(--muted);line-height:1.25}
+.rec-c.n5{background:var(--gold-soft);border-color:var(--gold)}.rec-c.n4{background:var(--ok-soft);border-color:var(--ok)}.rec-c.n0{background:var(--bad-soft);border-color:var(--bad)}.rec-c.cur{border-style:dashed;background:var(--surface)}
+.rec-leg{display:flex;flex-wrap:wrap;gap:10px;font-size:.78rem;color:var(--muted)}.rec-leg i{display:inline-block;width:12px;height:12px;border-radius:3px;border:1.5px solid var(--line);vertical-align:-1px;margin-right:5px}
+.pf{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}@media (max-width:1000px){.pf{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:480px){.pf{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}}.pf figure{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.pf figcaption{font-size:.78rem;line-height:1.25}.pf figcaption b{font-family:var(--f-display);font-size:1rem;letter-spacing:.02em}.pf figcaption span{overflow-wrap:anywhere;font-family:var(--f-data);font-size:.68rem;color:var(--muted);display:block}
+.pf svg{width:100%;height:auto;display:block;border-radius:6px;background:var(--surface-2)}
+.pk{display:flex;flex-wrap:wrap;gap:12px;font-size:.78rem;color:var(--muted);align-items:center}.pk i{display:inline-block;width:14px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.tt td,.tt th{font-size:.84rem;padding:6px 8px}.tt tr.hl td{background:var(--gold-soft);font-weight:600}.tt tr.bad td{background:var(--bad-soft)}
+#drills-app .ctx{display:flex;flex-direction:column;gap:6px}#drills-app .ctx h3{margin:0}#drills-app .ctx .tw{overflow-x:auto}
+#drills-app .ctx table{font-size:.84rem}#drills-app .ctx th,#drills-app .ctx td{padding:6px 8px}#drills-app .ctx th{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500}
+#drills-app .ctx td.lo{color:var(--bad);font-weight:600}
+
+.answer{margin-top:18px}.cta-row{margin:14px 0 2px}.cta{display:inline-block;background:var(--navy);color:var(--navy-fg);padding:10px 16px;border-radius:8px;font-weight:600;text-decoration:none}.cta:hover{filter:brightness(1.15)}
+.msteps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:6px 0 10px}.step{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:12px}.step span{display:block;font-family:var(--f-data);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}.step p{margin:0;font-size:.92rem}
+details.more{margin:10px 0}details.more>summary{cursor:pointer;font-weight:600;padding:10px 0;color:var(--navy)}
+.react th small,.react td small.nn{font-weight:400;color:var(--muted)}.react td,.react th{text-align:left}.react td{font-size:.86rem;line-height:1.5;vertical-align:top}.react th{vertical-align:top}
+.tcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:14px 0}
+.tcol{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.tcol h4{margin:0 0 2px;font-size:1.02rem}
+.tcol .tsub{margin:0 0 8px;font-weight:600;opacity:.85}
+.tcol ul{margin:0 0 10px;padding-left:18px}.tcol li{margin-bottom:6px}
+.tcol .tprog{margin:0;padding-top:8px;border-top:1px solid var(--line)}
+.ghead{display:grid;grid-template-columns:1fr minmax(120px,1.4fr) auto;gap:12px;padding:8px 12px 4px;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.ghead span:last-child{min-width:64px;text-align:center}
+.sl{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center}.sl small{grid-column:1/-1;color:var(--muted);font-family:var(--f-data);font-size:.72rem}
+.dot{width:14px;height:14px;border-radius:50%;display:inline-block}.dot.g{background:#2E9E5B}.dot.y{background:#E6B422}.dot.r{background:#D8453A}
+@media (max-width:560px){.ghead{display:none}.game{grid-template-columns:1fr auto}.game .sl{grid-column:1/-1;order:3}}
+.tcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:12px 0 16px}
+.tcard{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface)}
+.tcard .badge{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-size:1.6rem;color:#111;font-weight:700}
+.tcard b{display:block;font-size:.92rem;line-height:1.2;margin:2px 0}.tcard .eq{font-family:var(--f-display);font-size:1.15rem;letter-spacing:.02em}
+.tcard small{display:block;color:var(--muted);font-family:var(--f-data);font-size:.74rem;line-height:1.35}
+.card{display:flex;flex-direction:column;gap:16px;min-width:0}#drills-app h2{font-size:1.7rem}#drills-app .list{margin:0}
+</style></head><body>
+
+<div class="wrap">
+<header class="hero">
+  <p class="eyebrow">Hackathon ISAC 2026 · ITAM Sports Analytics Conference · Club América</p>
+  <h1>Cómo juega, cambia y decide un campeón de Liga MX</h1>
+  <p class="lead">Un análisis táctico con datos de StatsBomb para responder tres preguntas: qué principios definen a un equipo en ataque y en defensa, cómo se manifiestan a lo largo del tiempo y cómo ajusta su entrenador el comportamiento según el contexto (rival, marcador, localía y momento del juego). Con eso se construye una herramienta para decidir en el descanso.</p>
+  <p class="eyebrow">Autores: Diego Díaz Abascal · Emiliano Chain Ruiz</p>
+  <nav class="toc" aria-label="Índice por criterio de evaluación">
+    <a href="#drills">Simulador</a>
+    <a href="#herramienta">El modelo</a>
+    <a href="#estilo">Cómo juega</a>
+    <a href="#contraste">Contraste</a>
+    <a href="#causal">Lo que no encontramos</a>
+    <a href="#metodo">Metodología</a>
+  </nav>
+  <div class="panel base">
+    <h3>Nuestro caso base: André Jardine con el América</h3>
+    <p>Para desarrollar el análisis tomamos como entrenador base a André Jardine con el Club América. Tenemos sus 129 partidos y 442,202 eventos de StatsBomb, de las temporadas 2023/24 a 2025/26. Además, es el entrenador más exitoso de nuestros datos: fue tricampeón de Liga MX (Apertura 2023, Clausura 2024 y Apertura 2024). Después lo comparamos con otros tres técnicos campeones.</p>
+  </div>
+</header>
+
+<section id="drills">
+  <div class="sechead"><p class="eyebrow">Simulador · interpretabilidad</p><h2>Ponte en la banca de Jardine: cuatro decisiones reales</h2></div>
+  <p>Cuatro decisiones de banca con partidos reales de América, sorteadas de un banco de 12 escenarios. En cada una eliges, ves qué respalda la evidencia y lo comparas con lo que pasó.</p>
+  <div class="panel" id="drills-app" aria-live="polite"></div>
+</section>
+
+<section id="herramienta">
+  <div class="sechead"><p class="eyebrow">El modelo del descanso, paso a paso</p><h2>¿Cómo sabe el modelo lo que va a pasar?</h2></div>
+  <p>Es el modelo detrás de la primera decisión del simulador, y funciona igual para cualquier equipo. Aquí la explicamos como si se la contáramos a alguien que nunca ha visto un modelo estadístico.</p>
+  <div class="panel">
+    <h3>1 · Qué queremos saber</h3>
+    <p>Es el descanso y el partido va a medias. La pregunta es: <b>¿cómo va a terminar? ¿Gana, empata o pierde el equipo?</b></p>
+    <p>Pasa como con el pronóstico del clima: no dice "va a llover", dice "hay 70% de probabilidad de lluvia". Nuestro modelo no dice "va a perder", dice "hay 65% de probabilidad de que pierda".</p>
+  </div>
+  <div class="panel">
+    <h3>2 · Cómo se construye</h3>
+    <div class="msteps">
+      <div class="step"><span>Paso 1 · Los partidos de antes</span><p>Juntamos partidos que ya pasaron de un mismo equipo. Lo desarrollamos con el América de Jardine como caso base (91 partidos de las temporadas 2023/24 y 2024/25) y después repetimos el mismo método con los equipos de los otros tres técnicos.</p></div>
+      <div class="step"><span>Paso 2 · El primer tiempo de cada uno</span><p>De cada partido anotamos cómo fue la primera mitad: el marcador, quién tuvo más el balón, quién estuvo más cerca de la portería rival (field tilt), cuánto presionó cada uno (PPDA), cuántos tiros hubo y qué tan peligrosos fueron (xG), y si jugaba de local o de visita.</p></div>
+      <div class="step"><span>Paso 3 · Cómo terminó</span><p>Al lado anotamos cómo acabó: ganó, empató o perdió.</p></div>
+      <div class="step"><span>Paso 4 · Buscar el patrón</span><p>El modelo mira todos esos partidos y aprende: "cuando el primer tiempo se veía así, el partido solía terminar así". El nombre técnico es regresión logística.</p></div>
+      <div class="step"><span>Paso 5 · El examen</span><p>Probamos con partidos más recientes que el modelo nunca había visto (en el caso base, 38 de 2025/26). Le damos solo el primer tiempo y comparamos su pronóstico con lo que de verdad pasó.</p></div>
+    </div>
+    <p class="note">Solo usa lo que pasó hasta el minuto 45, así que no puede hacer trampa viendo lo que viene después.</p>
+  </div>
+  <div class="panel">
+    <h3>3 · Qué contesta: tres porcentajes que suman 100%</h3>
+    <p>Dos ejemplos del caso base, el América de Jardine:</p>
+    <div class="scroll"><table class="tt">
+      <thead><tr><th>Partido de examen</th><th>Al descanso</th><th>Ganar</th><th>Empatar</th><th>Perder</th><th>Terminó</th></tr></thead>
+      <tbody>
+        <tr><td>América – Querétaro, 10 ago 2025</td><td>Ganaba 1-0</td><td>87%</td><td>12%</td><td>2%</td><td>Ganó 1-0: el modelo acertó</td></tr>
+        <tr><td>América – Guadalajara, 14 sep 2025</td><td>Empataba 0-0</td><td>42%</td><td>46%</td><td>12%</td><td>Perdió 1-2: era un partido parejo y se fue al otro lado</td></tr>
+      </tbody></table></div>
+    <p class="note">El modelo no adivina: reparte probabilidades. Cuando dice 87%, a veces pasa lo otro. Por eso lo juzgamos en muchos partidos, no en uno.</p>
+  </div>
+  <div class="panel">
+    <h3>4 · Cómo sabemos si es bueno</h3>
+    <p>Lo comparamos con alguien que no mira el partido y siempre dice lo mismo: "este equipo gana más o menos la mitad de las veces". A ese le llamamos el <b>modelo ingenuo</b>.</p>
+    <ul class="list">
+      <li><b>El ingenuo</b> le da en promedio 33% de probabilidad a lo que de verdad ocurre (en el caso base, el América).</li>
+      <li><b>Nuestro modelo</b>, que sí mira el primer tiempo, le da 42%.</li>
+    </ul>
+    <p>Mejora, pero no es una bola de cristal: sirve para saber qué tan arriesgado viene el partido, no para asegurar un resultado.</p>
+  </div>
+  <div class="panel" id="operativo">
+    <h3>5 · Del modelo al semáforo: lo aplicamos al América</h3>
+    <p>El semáforo es parte de nuestro modelo: el modelo da tres porcentajes (gana, empata, pierde) y el semáforo los traduce a un color según el riesgo de perder. El modelo se puede construir para cualquier equipo; aquí lo usamos específicamente con el América de Jardine. Con lo que un cuerpo técnico ya tiene al minuto 45, lo probamos sobre los 38 partidos de la temporada 2025/26 del América, que el modelo nunca vio al entrenar.</p>
+    <div class="sem" id="sem"></div>
+    <div class="callout"><b>Cómo leerlo.</b> El semáforo mira solo el riesgo de perder que da el modelo al descanso: verde si es menor a 10%, amarillo de 10% a 40%, rojo de 40% en adelante. No dice quién va a ganar. Un partido con 76% de ganar y 11% de perder es amarillo, y en los 4 partidos en que el modelo favorecía ganar y el América perdió, el color fue amarillo. Verde: mantener el planteamiento. Rojo: hay que decidir un ajuste. El modelo dice qué pasa si nada cambia; no prueba que un ajuste concreto funcione. Los umbrales (10% y 40%) se fijaron viendo estos 38 partidos, así que son exploratorios y no una regla validada.</div>
+  </div>
+  <div class="panel">
+    <h3>Los 38 partidos del América en 2025/26, al descanso</h3>
+    <p class="note">Cada fila es un partido. A la izquierda, lo que dijo el modelo al descanso: el color del semáforo y el riesgo de perder. A la derecha, lo que pasó al final.</p>
+    <div class="chips" role="group" aria-label="Filtrar partidos">
+      <button class="chip" data-f="all" aria-pressed="true">Todos</button>
+      <button class="chip" data-f="g" aria-pressed="false">Verde</button>
+      <button class="chip" data-f="y" aria-pressed="false">Amarillo</button>
+      <button class="chip" data-f="r" aria-pressed="false">Rojo</button>
+      <button class="chip" data-f="lost" aria-pressed="false">Los que perdió</button>
+    </div>
+    <div class="ghead"><span>Partido</span><span>Semáforo del modelo al descanso</span><span>Resultado final</span></div>
+    <div class="games" id="games" tabindex="0" aria-label="Lista de partidos con semáforo al descanso y resultado"></div>
+  </div>
+</section>
+
+<section id="estilo">
+  <div class="sechead"><p class="eyebrow">Principios · ataque, defensa y contexto</p><h2>Cómo juega América de Jardine</h2></div>
+  <p>América domina el territorio y lo convierte en ocasiones de calidad, sin ser un equipo de presión alta ni de posesión pura. Construye desde atrás con salida mixta, progresa por el carril central y reparte el esfuerzo de presión en el bloque medio.</p>
+  <div class="panel">
+    <h3>Con el tiempo: presiona más y concede menos, pero cada tiro vale menos</h3>
+    <div class="minis" id="minis"></div>
+    <p class="note">La defensa y el territorio mejoran cada temporada (PPDA −23%, tiros en contra de 12.2 a 10.1). La generación ofensiva tiene matiz: los tiros suben pero el xG a favor baja de 1.82 a 1.39 por partido. América tira más y cada tiro vale menos.</p>
+  </div>
+  <div class="panel">
+    <h3>De local o de visita: juega casi igual, pero de visitante pierde territorio y los tiros se emparejan</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Métrica</th><th>Local</th><th>Visitante</th><th>Cambio de visitante</th></tr></thead>
+      <tbody>
+        <tr><td>Posesión</td><td>51.2%</td><td>50.5%</td><td>−0.7 pp (casi igual)</td></tr>
+        <tr><td>PPDA (presión)</td><td>3.44</td><td>3.46</td><td>+0.02 (casi igual)</td></tr>
+        <tr class="hl"><td>Field tilt relativo</td><td>61.3%</td><td>55.9%</td><td>−5.4 pp</td></tr>
+        <tr class="hl"><td>Tiros a favor</td><td>14.97</td><td>12.65</td><td>−2.3 (−15%)</td></tr>
+        <tr class="hl"><td>Tiros en contra</td><td>9.72</td><td>12.57</td><td>+2.9 (+29%)</td></tr>
+      </tbody></table></div>
+    <p class="note"><b>La historia de la localía:</b> el América no cambia su forma de jugar. La posesión baja apenas 0.7 puntos y el PPDA casi no se mueve. Lo que cambia es el partido que se genera: de visitante tiene 5.4 puntos menos de territorio, tira 2.3 tiros menos y recibe 2.9 tiros más. El resultado se ve en la diferencia de tiros por partido: de local gana por 5.3 (14.97 contra 9.72) y de visitante queda casi empatado (12.65 contra 12.57).</p>
+  </div>
+  <div class="panel">
+    <h3>Balón parado: 4 de cada 10 córners terminan en remate</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Jugada</th><th>Ejecutadas</th><th>Terminan en remate</th><th>xG a favor</th><th>xG en contra</th></tr></thead>
+      <tbody>
+        <tr><td>Córner</td><td>681</td><td>42.6%</td><td>25.79</td><td>21.45</td></tr>
+        <tr><td>Tiro libre</td><td>1,618</td><td>18.7%*</td><td>31.68</td><td>14.32</td></tr>
+        <tr><td>Saque de banda</td><td>2,480</td><td>9.0%</td><td>22.11</td><td>n/d</td></tr>
+      </tbody></table></div>
+    <p class="note">*El denominador del tiro libre incluye reposiciones lejos del área; no es comparable de forma directa con el córner. El envío dominante en córner es cerrado hacia el punto penal (285 de 452 con técnica identificada).</p>
+  </div>
+</section>
+
+<section id="contraste">
+  <div class="sechead"><p class="eyebrow">Reproducibilidad · mismo framework, otros técnicos</p><h2>Contraste con otros tres entrenadores: ¿hay una sola forma de ganar?</h2></div>
+  <p>El mismo método, sin cambiar el código, se aplicó a otros tres técnicos de Liga MX, además de Jardine:</p>
+  <div class="tcards" id="tcards"></div>
+  <div class="callout"><b>Por qué esta comparación.</b> Los cuatro entrenadores tienen algo en común: fueron campeones de Liga MX en las temporadas que analizamos (Jardine: Apertura 2023, Clausura 2024 y Apertura 2024; Almada: Apertura 2022; Cocca: Apertura 2021 y Clausura 2022; Mohamed: Clausura 2025 y Apertura 2025). Así que no preguntamos qué distingue a un campeón de un equipo débil, sino <b>si hay una sola forma de ganar o varias</b>, y probamos que el método funciona más allá del América.</div>
+  <div class="panel">
+    <h3>Perfil de estilo</h3>
+    <div class="kchips" id="kchips" role="group" aria-label="Destacar un entrenador"></div>
+    <div id="mrows"></div>
+    <p class="note">Promedio por partido de cada métrica (por eso el PPDA de América aquí, 3.45, difiere del 3.22 calculado sobre los 129 partidos juntos). Cada punto es un entrenador, sobre una escala propia de cada fila. PPDA: menor significa más presión. Altura de línea: x promedio de las acciones defensivas, de 0 (portería propia) a 120. Contrapresión: % de pérdidas con un Pressure propio en los 8 segundos siguientes.</p>
+  </div>
+  <ul class="list">
+    <li><b>Estilo:</b> América destaca en territorio (field tilt relativo 58.6% contra 49.8% a 55.1%) y en solidez (xG en contra 0.94 contra 1.17 a 1.28). El Atlas de Cocca es el único equipo con más xG en contra que a favor.</li>
+    <li><b>Causalidad:</b> el efecto de cambiar rápido tras un gol en contra va de −5.8 a +17.8 puntos y los cuatro intervalos incluyen el cero. No hay un efecto consistente en ninguno.</li>
+  </ul>
+  <div class="panel">
+    <h3>Field tilt en cancha: dónde se juega</h3>
+    <div class="pk"><span>Cada cancha muestra dónde hace sus acciones el equipo (el equipo ataca hacia la derecha). Más intenso = más acciones por partido, misma escala en los cuatro. Los recuadros punteados son las dos franjas del field tilt: el número "propio" es lo que hace el equipo en la franja derecha (x &gt; 80) y "rival" lo que hace el rival en la franja izquierda (x &lt; 40).</span></div><div class="pk"><span>menos</span><i class="gr" style="background:linear-gradient(90deg,#2F7D3C,#C8E04B,#FFD23A,#FF8A1F,#E5221B);width:140px;height:10px;border:1px solid var(--line)"></i><span>más acciones del equipo</span></div>
+    <div class="pf" id="mp-terr"></div>
+    <p class="note"><b>Cómo ataca el rival:</b> el número "rival" de cada cancha cuenta las acciones del rival cuando llega al último tercio del equipo, la franja izquierda cerca de su portería (x &lt; 40). Mientras más bajo, menos se acerca el rival a esa zona. América es el que menos concede (349 por partido) y Pachuca el que más (401); Atlas y Toluca están en 373 y 375. El field tilt relativo es propias ÷ (propias + rival).</p>
+  </div>
+  <div class="panel">
+    <h3>PPDA en cancha: dónde presiona cada equipo</h3>
+    <div class="pk"><span><i style="background:#E5221B"></i>más presiones por partido (de verde a rojo)</span><span>Misma escala en los cuatro equipos. El recuadro punteado es la zona desde donde se cuenta el PPDA (x > 72).</span></div><div class="pk"><span>pocas presiones</span><i class="gr" style="background:linear-gradient(90deg,#2F7D3C,#C8E04B,#FFD23A,#FF8A1F,#E5221B);width:130px;height:10px;border:1px solid var(--line)"></i><span>muchas</span></div>
+    <div class="pf" id="mp-pres"></div>
+  </div>
+  <div class="panel">
+    <h3>Altura de la línea defensiva</h3>
+    <div class="pk"><span><i style="background:#fff;border:1px solid var(--line)"></i>línea blanca: altura media</span><span><i style="background:#9fb3a3;border:1px solid var(--line)"></i>franja clara: rango entre el 25% y el 75% de los partidos</span><span>Su portería está a la izquierda. De verde a rojo: dónde hacen más intercepciones, despejes, duelos y bloqueos.</span></div>
+    <div class="pf" id="mp-alt"></div>
+  </div>
+  <div class="panel">
+    <h3>Qué cuenta cada técnico con su forma de jugar</h3>
+    <p>Juntando el perfil de estilo y las tres canchas, cada equipo cuenta una historia distinta, aunque los cuatro ganaron el título.</p>
+    <div class="tcols"><div class="tcol"><h4>América · Jardine</h4><p class="tsub">Domina el territorio y casi no concede</p><ul><li>Más juego en campo rival: field tilt 58.6%, el más alto.</li><li>Construye con menos pase largo (41.6%).</li><li>El que menos xG permite (0.94).</li><li>Presiona menos veces (PPDA 3.45), pero más arriba: 24.7% de sus presiones en el último tercio rival, la cifra más alta.</li></ul><p class="tprog"><b>Cómo progresa:</b> se carga por el lado izquierdo del campo la mayoría de las veces (53.3% de sus acciones, la cifra más alta de los cuatro).</p></div><div class="tcol"><h4>Pachuca · Almada</h4><p class="tsub">El que más presiona</p><ul><li>PPDA más bajo (2.76) y 164 presiones por partido.</li><li>Dirige la presión hacia las bandas: 54.8% de sus presiones (América 51.0%).</li><li>Con balón genera mucho (16.2 tiros), pero concede más xG que América (1.19).</li></ul><p class="tprog"><b>Cómo progresa:</b> es el equipo que más arma su juego por las bandas (52.4% de sus acciones, 57.2% en campo rival).</p></div><div class="tcol"><h4>Atlas · Cocca</h4><p class="tsub">Juego directo y sin dominio</p><ul><li>Más pase largo (48.8%), menor field tilt (49.8%) y menor contrapresión (45.4%).</li><li>Recibe más tiros (13.5) de los que genera (11.7): único con xG en contra mayor que a favor (1.28 contra 1.16).</li><li>Línea más alta (43.9), pero es el que menos presiona en el último tercio rival (23.1%).</li></ul><p class="tprog"><b>Cómo progresa:</b> busca progresar más por el medio del campo.</p></div><div class="tcol"><h4>Toluca · Mohamed</h4><p class="tsub">Espera atrás y ataca rápido</p><ul><li>Línea defensiva más baja (40.9); 57.1% de sus acciones defensivas en su propio tercio.</li><li>Es el que más tira (16.8) y más xG genera (1.92).</li><li>Pase largo alto (44.3%): defiende cerca de su área y sale rápido.</li></ul><p class="tprog"><b>Cómo progresa:</b> busca mucho a su delantero centro para jugar de poste con él y buscar jugadas cortas en el área.</p></div></div>
+    <p class="note">Las diferencias en dónde presiona cada uno son pequeñas (entre 51% y 55% de las presiones se dan por las bandas y entre 23% y 25% en el último tercio rival), así que lo que más distingue a los equipos es cuánto presionan, qué tan alta es su línea, qué tanto pase largo usan y cuánto territorio dominan. La zona del portero rival (x > 100, carril central) recibe solo 4.6% a 5.4% de las presiones en los cuatro. Son promedios por partido de 77 a 139 partidos por técnico.</p>
+  </div>
+  <div class="panel">
+    <h3>Qué hacen los entrenadores ante situaciones inesperadas</h3>
+    <p>Para cada situación miramos los 5 minutos siguientes y los comparamos con cómo juega normalmente ese equipo. Un signo + significa que lo hace más que de costumbre; un signo −, menos. Un tiro o una presión "por 10 min" es el cambio en la tasa de esos 10 minutos.</p>
+    <div class="scroll"><table class="tt react"><thead><tr><th>Situación</th><th>Jardine<br><small>América</small></th><th>Almada<br><small>Pachuca</small></th><th>Cocca<br><small>Atlas</small></th><th>Mohamed<br><small>Toluca</small></th></tr></thead><tbody><tr><td style="white-space:normal"><b>Pierde al descanso</b></td><td style="white-space:normal">Posesión +9.4 pp<br>Presiones +4.1 por 10 min<br>Tiros +1.2 por 10 min<br>Saca punto en 56.5%<br><small class="nn">n = 23</small></td><td style="white-space:normal">Posesión +0.5 pp<br>Presiones +8.1 por 10 min<br>Tiros +0.9 por 10 min<br>Saca punto en 30.0%<br><small class="nn">n = 40</small></td><td style="white-space:normal">Posesión +10.5 pp<br>Presiones +5.2 por 10 min<br>Tiros +0.8 por 10 min<br>Saca punto en 23.1%<br><small class="nn">n = 26</small></td><td style="white-space:normal">Posesión +10.4 pp<br>Presiones +6.4 por 10 min<br>Tiros +1.4 por 10 min<br>Saca punto en 46.7%<br><small class="nn">n = 15</small></td></tr><tr><td style="white-space:normal"><b>Recibe un gol</b></td><td style="white-space:normal">Posesión +3.5 pp<br>Línea −3.6 m<br>Tiros −0.1 por 10 min<br><small class="nn">n = 120</small></td><td style="white-space:normal">Posesión +1.5 pp<br>Línea −3.7 m<br>Tiros +0.1 por 10 min<br><small class="nn">n = 192</small></td><td style="white-space:normal">Posesión +1.7 pp<br>Línea −2.6 m<br>Tiros +0.1 por 10 min<br><small class="nn">n = 114</small></td><td style="white-space:normal">Posesión +1.9 pp<br>Línea −2.5 m<br>Tiros +0.4 por 10 min<br><small class="nn">n = 92</small></td></tr><tr><td style="white-space:normal"><b>Le expulsan a un jugador</b></td><td style="white-space:normal">Posesión −13.4 pp<br>Línea −10.3 m<br>Pases largos +26.5 pp<br><small class="nn">n = 9</small></td><td style="white-space:normal">Posesión −10.1 pp<br>Línea −13.7 m<br>Pases largos +14.6 pp<br><small class="nn">n = 23</small></td><td style="white-space:normal">Posesión −24.4 pp<br>Línea −15.1 m<br>Pases largos +22.7 pp<br><small class="nn">n = 18</small></td><td style="white-space:normal">Posesión −8.3 pp<br>Línea −14.9 m<br>Pases largos −9.9 pp<br><small class="nn">n = 13</small></td></tr><tr><td style="white-space:normal"><b>Le expulsan un jugador al rival</b></td><td style="white-space:normal">Posesión +12.8 pp<br>Línea +11.9 m<br>Tiros +0.2 por 10 min<br><small class="nn">n = 27</small></td><td style="white-space:normal">Posesión +17.6 pp<br>Línea +8.6 m<br>Tiros +0.7 por 10 min<br><small class="nn">n = 24</small></td><td style="white-space:normal">Posesión −0.6 pp<br>Línea +7.0 m<br>Tiros +0.6 por 10 min<br><small class="nn">n = 21</small></td><td style="white-space:normal">Posesión +15.1 pp<br>Línea −4.1 m<br>Tiros −0.7 por 10 min<br><small class="nn">n = 9</small></td></tr></tbody></table></div>
+    <ul class="list">
+      <li><b>Recibir un gol casi no cambia el plan de nadie:</b> la posesión sube apenas entre 1.5 y 3.5 puntos y la línea baja entre 2.5 y 3.7 metros en los cuatro.</li>
+      <li><b>Ir perdiendo al descanso sí lo cambia:</b> los cuatro presionan más y tiran más. Lo que cambia es cómo: Jardine, Cocca y Mohamed ganan unos 10 puntos de posesión, mientras que Almada casi no (+0.5) y es el que más presiona (+8.1 presiones por 10 minutos).</li>
+      <li><b>Con un jugador menos, los cuatro se repliegan:</b> bajan la línea entre 10 y 15 metros. Jardine, Cocca y Almada juegan más largo (+27, +23 y +15 puntos de pases largos); Mohamed no (−10).</li>
+      <li><b>Con un jugador más:</b> Jardine, Almada y Mohamed controlan el balón (+13 a +18 puntos); Cocca no gana posesión (−0.6). Todos adelantan la línea (+7 a +12 metros) salvo Mohamed (−4).</li>
+    </ul>
+    <p class="note">Las expulsiones son pocas (entre 9 y 27 por técnico), así que son patrones, no reglas. Describimos qué hacen, no si fue buena idea: el modelo del descanso solo dice qué tan arriesgado viene el partido, y el simulador de arriba te deja decidir qué hacer con eso.</p>
+  </div>
+  <div class="panel">
+    <h3>Cuando van perdiendo al descanso: ¿sacan al menos un punto?</h3>
+    <div id="comeback"></div>
+    <p class="note">Los porcentajes salen de 15 a 40 partidos por técnico, y bajo cada barra se indica cuántos fueron en el torneo o torneos donde salió campeón. Con tan pocos casos (Almada tiene 4) no se puede separar el efecto del título. La diferencia entre Jardine (56.5%) y Almada (30.0%) tiene p = 0.06 en una prueba exacta de Fisher: sugerente, no concluyente. Coincide con el bloque de situaciones inesperadas, donde ir perdiendo al descanso es la reacción más ofensiva de Jardine.</p>
+  </div>
+  <div class="panel">
+    <h3>La historia de cada técnico en el tiempo</h3>
+    <p>Con las cifras de cada torneo (puntos, xG, PPDA y field tilt), cada técnico cuenta una historia distinta, y ninguna es "ganar de una sola manera".</p>
+    <div class="tcols"><div class="tcol"><h4>América · Jardine</h4><p class="tsub">Presiona más y domina más, pero cada vez crea menos peligro</p><ul><li>De su primer título (Apertura 2023) a su mejor momento de presión (Apertura 2025), el PPDA baja de 3.72 a 2.69 y el field tilt sube de 57% a 63%.</li><li>Defiende cada vez mejor: tiros en contra de 11.3 a 9.2 por partido en ese tramo.</li><li>Pero el xG a favor cae de 2.01 a 1.12 por partido (Clausura 2026) y los puntos por torneo pasan de 40 a 25.</li></ul><p class="tprog"><b>Lo que cuenta:</b> Jardine evoluciona hacia un equipo más dominante y más sólido atrás, no hacia uno más productivo. Ganó sus tres títulos con 2.0, 1.9 y 1.5 de xG por partido, y hoy domina más pero con menos ocasiones claras.</p></div><div class="tcol"><h4>Pachuca · Almada</h4><p class="tsub">Presión alta constante, pero la defensa se debilita</p><ul><li>Su identidad casi no cambia: PPDA entre 2.57 y 2.85 en los cinco torneos analizados, el más presionante de los cuatro.</li><li>Sus mejores torneos (32 y 31 puntos) tuvieron 76% y 75% de titulares repetidos.</li><li>El xG en contra sube de 0.78 (Apertura 2022, campeón) a 1.63 (Apertura 2023), cuando solo repitió 33% de titulares.</li></ul><p class="tprog"><b>Lo que cuenta:</b> Almada es el técnico de la presión y del juego por las bandas. Su estilo es muy estable, y cuando se renueva la plantilla es la defensa la que lo paga.</p></div><div class="tcol"><h4>Atlas · Cocca</h4><p class="tsub">Juego directo que funciona hasta que sube el costo defensivo</p><ul><li>Campeón con 29 y 27 puntos y un PPDA cerca de 2.8, con la mayor proporción de pase largo (48.8%).</li><li>Su xG en contra sube torneo a torneo: 0.94, 1.12, 1.29.</li><li>En el Apertura 2022 baja a 13 puntos con un PPDA de 3.61: presiona menos y concede más.</li></ul><p class="tprog"><b>Lo que cuenta:</b> Cocca construye un equipo directo que no domina el territorio (field tilt 49.8%). Cuando el equipo deja de presionar, su estilo pierde la red de seguridad.</p></div><div class="tcol"><h4>Toluca · Mohamed</h4><p class="tsub">Crea mucho y de forma constante, pero convierte menos</p><ul><li>Su xG a favor es el más alto y casi no se mueve: 1.80, 1.92, 1.90 y 1.97 en sus cuatro torneos.</li><li>Sube su dominio: field tilt de 53% a 60% desde 2026.</li><li>Pero sus goles bajan de 2.53 a 1.65 por partido y los puntos de 37 a 30 (y 21 en 12 partidos del Apertura 2026).</li></ul><p class="tprog"><b>Lo que cuenta:</b> Mohamed construye un equipo que genera muchas ocasiones en cada torneo. Los goles y los puntos bajan aunque lo que crea no baja; el xG en contra también subió un poco (de 0.98 a 1.15).</p></div></div>
+    <p class="note">Cifras por torneo regular, promedios por partido. Se muestran solo los torneos de los que la base tiene los partidos completos; el Apertura 2026 de Toluca va en curso (12 partidos). Las explicaciones sobre por qué cambian los equipos son lecturas de los datos, no pruebas causales.</p>
+  </div>
+  <div class="panel">
+    <h3>De campeón a no clasificar: ¿qué cambió?</h3>
+    <p>Después de ver cómo juega cada técnico, hay dos caídas bruscas en los datos: Atlas pasó de dos títulos a 13 puntos en el Apertura 2022, y Pachuca pasó del título del Apertura 2022 a quedar fuera de liguilla en el Apertura 2023 y el Apertura 2024. Estas tablas separan tres posibles causas con datos de los propios partidos: cambio de jugadores (columna "Titulares que repiten"), rendimiento de juego (xG, PPDA) y suerte (goles contra el xG).</p>
+    <h3>Atlas (Cocca)</h3><div class="scroll"><table class="tt"><thead><tr><th>Torneo</th><th>Puntos</th><th>xG favor</th><th>xG contra</th><th>Goles contra</th><th>PPDA</th><th>Titulares que repiten</th></tr></thead><tbody><tr class=""><td>Apertura 2021</td><td>29</td><td>1.17</td><td>0.94</td><td>0.59</td><td>2.89</td><td>—</td></tr><tr class=""><td>Clausura 2022</td><td>27</td><td>1.09</td><td>1.12</td><td>0.88</td><td>2.80</td><td>74%</td></tr><tr class="bad"><td>Apertura 2022</td><td>13</td><td>1.23</td><td>1.29</td><td>1.59</td><td>3.61</td><td>75%</td></tr></tbody></table></div><h3>Pachuca (Almada)</h3><div class="scroll"><table class="tt"><thead><tr><th>Torneo</th><th>Puntos</th><th>xG favor</th><th>xG contra</th><th>Goles contra</th><th>PPDA</th><th>Titulares que repiten</th></tr></thead><tbody><tr class="hl"><td>Apertura 2022</td><td>32</td><td>1.52</td><td>0.78</td><td>0.88</td><td>2.78</td><td>76%</td></tr><tr class=""><td>Clausura 2023</td><td>31</td><td>1.58</td><td>1.26</td><td>1.41</td><td>2.57</td><td>75%</td></tr><tr class="bad"><td>Apertura 2023</td><td>22</td><td>1.42</td><td>1.63</td><td>1.59</td><td>2.69</td><td>33%</td></tr><tr class=""><td>Clausura 2024</td><td>29</td><td>1.46</td><td>1.03</td><td>1.59</td><td>2.85</td><td>46%</td></tr><tr class="bad"><td>Apertura 2024</td><td>13</td><td>1.12</td><td>1.15</td><td>1.71</td><td>2.68</td><td>75%</td></tr></tbody></table></div>
+    <ul class="list">
+      <li><b>Atlas, Apertura 2022:</b> la plantilla casi no cambió (75% de los titulares repite) y el xG fue parecido al del título del Clausura 2022 (1.23 a favor, 1.29 en contra, contra 1.09 y 1.12). Lo que sí cambió fue la suerte: recibió 1.59 goles por partido cuando el xG decía 1.29, y presionó menos (PPDA de 2.80 a 3.61). El título del Clausura 2022 llegó con un xG parejo y con goles en contra (0.88) por debajo del xG (1.12), así que parte de ese éxito dependió de la suerte. Además, la prensa reportó la salida de Maroni y Troynasky antes del torneo, que Cocca anunció su salida durante el Apertura 2022 y, según ESPN, jugadores como Anderson Santamaría reconocieron que se relajaron tras el bicampeonato.</li>
+      <li><b>Pachuca, Apertura 2023:</b> aquí sí hubo cambio de jugadores. Solo 33% de los titulares repitió respecto al torneo anterior y el xG en contra subió de 0.78 (torneo campeón) a 1.63. Es la única de las caídas analizadas donde los datos señalan una renovación de plantilla.</li>
+      <li><b>Pachuca, Apertura 2024:</b> 13 puntos, el peor torneo corto de su historia. La plantilla era la misma (75% repite) y el xG neutro (1.12 a favor, 1.15 en contra). Almada citó una pretemporada de apenas 12 días, pausas durante el torneo, desgaste de jugadores por la selección y errores defensivos.</li>
+      <li><b>Pachuca, Clausura 2023:</b> la defensa ya había empeorado (xG en contra 1.26) y el equipo campeón quedó fuera en el repechaje contra Santos (4-4, penales); Almada lo atribuyó a errores defensivos.</li>
+    </ul>
+    <p class="note">Estas son hipótesis, no pruebas: con 17 partidos por torneo el xG y los puntos tienen mucho ruido, y no medimos lesiones ni el calendario de competencias internacionales. Los datos de plantilla y xG salen de StatsBomb; las causas citadas (bajas, relajamiento, pretemporada) vienen de reportes de prensa (Fox Sports, ESPN, TUDN, Criterio Hidalgo) y declaraciones de los técnicos. "Titulares que repiten" es la proporción de titularidades del torneo que corresponde a jugadores con 5 o más titularidades en el torneo anterior.</p>
+  </div>
+  <div class="callout"><b>Cómo leer este contraste.</b> Los equipos tienen plantillas y rivales distintos, y las muestras cubren épocas diferentes: Pachuca de 2021/22 a 2024/25, Atlas sobre todo 2021/22, 2022/23 y 2025/26, Toluca de 2024/25 a 2026/27 (con 12 partidos del torneo en curso) y América de 2023/24 a 2025/26. Se describen estilos; no se rankea a los entrenadores.</div>
+</section>
+
+<section id="causal">
+  <div class="sechead"><p class="eyebrow">Criterio · identificación causal</p><h2>Lo que probamos y no encontramos: ¿cambiar rápido tras un gol ayuda a anotar?</h2></div>
+  <p>Cuando le meten un gol a América, ¿hacer cambios rápido ayuda a anotar? Comparar el antes y el después engaña, porque el equipo ya venía perdiendo. Por eso comparamos cada gol en contra con goles parecidos, de la misma situación y del mismo momento del partido: 27 casos con cambio rápido contra casos similares sin cambio (88 goles en total).</p>
+  <div class="tiles">
+    <div class="tile"><span>Efecto emparejado</span><b>−5.8 pp</b><small>en la probabilidad de anotar en los 15 minutos siguientes</small></div>
+    <div class="tile"><span>Rango plausible (IC95)</span><b>−24.2 a +11.6</b><small>incluye el cero</small></div>
+    <div class="tile"><span>Conclusión</span><b>Sin efecto demostrable</b><small>ni a favor ni en contra</small></div>
+  </div>
+  <p>Lo reportamos como resultado nulo: con tan pocos casos solo se detectarían efectos grandes, y "no hay evidencia" no es lo mismo que "no hay efecto". Por eso no lo usamos como base de ninguna otra conclusión; el detalle técnico queda aquí por transparencia.</p>
+  <details class="more"><summary>Ver detalle técnico: sensibilidad, fragilidad y limitaciones</summary>
+<ul class="list">
+    <li><b>Tratamiento:</b> al menos una sustitución propia en los 10 minutos siguientes (27 casos).</li>
+    <li><b>Resultado:</b> gol propio en los 15 minutos siguientes.</li>
+    <li><b>Método:</b> emparejamiento exacto por estratos (situación × bloque de 15 minutos), intervalo de confianza por bootstrap (2,000 remuestreos) y prueba de sensibilidad a las ventanas.</li>
+  </ul>
+  <div class="panel">
+    <h3>Sensibilidad a las ventanas elegidas</h3>
+    <div id="forest"></div>
+    <p class="note">Cada fila es una combinación "ventana de reacción → ventana de resultado" en minutos (n = casos tratados). Se muestra el efecto emparejado con su IC95. La combinación de 5 minutos tiene solo 8 casos tratados y el signo se invierte: es ruido, y se descarta.</p>
+  </div>
+  <div class="panel">
+    <h3>Por qué el resultado es frágil</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Situación · minuto</th><th>Tratados</th><th>Controles</th><th>Anotan con cambio</th><th>Anotan sin cambio</th><th>Diferencia</th></tr></thead>
+      <tbody>
+        <tr><td>Empatando · 30</td><td>1</td><td>6</td><td>0%</td><td>0%</td><td>0.0</td></tr>
+        <tr><td>Empatando · 45</td><td>4</td><td>4</td><td>25%</td><td>25%</td><td>0.0</td></tr>
+        <tr><td>Perdiendo · 15</td><td>2</td><td>7</td><td>0%</td><td>14.3%</td><td>−14.3</td></tr>
+        <tr class="hl"><td>Perdiendo · 30</td><td>5</td><td>7</td><td>0%</td><td>42.9%</td><td>−42.9</td></tr>
+        <tr><td>Perdiendo · 45</td><td>9</td><td>11</td><td>22.2%</td><td>9.1%</td><td>+13.1</td></tr>
+        <tr><td>Perdiendo · 60</td><td>6</td><td>3</td><td>0%</td><td>0%</td><td>0.0</td></tr>
+      </tbody></table></div>
+    <p class="note">El signo cambia entre estratos y uno solo (perdiendo, minuto 30) explica buena parte del efecto. Quedan fuera 23 goles que no tienen comparable (los de los primeros 15 minutos casi nunca tienen cambio posterior), así que la estimación se apoya en 65 casos.</p>
+  </div>
+  <div class="callout"><b>Limitaciones.</b> Pocos casos (poca potencia: solo se detectarían efectos grandes). Los cambios planificados se mezclan con los reactivos. No se controló la fuerza del rival, el tipo de cambio, las tarjetas ni el estado físico. Los goles de un mismo partido se tratan como independientes. "No hay evidencia de efecto" no es lo mismo que "no hay efecto".</div>
+  </details>
+</section>
+
+<section id="metodo">
+  <div class="sechead"><p class="eyebrow">Metodología</p><h2>Datos, framework y reproducibilidad</h2></div>
+  <ul class="list">
+    <li><b>Datos:</b> eventos de StatsBomb (statsbombpy) de los 129 partidos de André Jardine en América, 442,202 eventos, temporadas 2023/24 a 2025/26.</li>
+    <li><b>Framework:</b> funciones de Python que reciben el equipo como parámetro (posesión, secuencias, fases de presión, field tilt, PPDA, xG, directividad, sustituciones, balón parado). Para analizar a otro entrenador se cambia el equipo y la tabla de partidos; el emparejamiento por estratos y el modelo no dependen del fútbol.</li>
+    <li><b>Coordenadas:</b> StatsBomb registra a cada equipo atacando hacia el mismo lado en su propio marco. Para comparar a ambos equipos se voltean las del rival; un error en este paso, ya corregido, cambió el field tilt relativo (de 49.9% a 58.8%) y el PPDA (de 2.19 a 3.22).</li>
+    <li><b>Predicción sin fuga de información:</b> variables cortadas al minuto 45, partición cronológica, estandarización ajustada solo con el entrenamiento.</li>
+    <li><b>Causalidad:</b> emparejamiento exacto por estratos, bootstrap con semilla fija (42) y análisis de sensibilidad.</li>
+    <li><b>Reproducibilidad:</b> el mismo código (cambiando solo el equipo) se aplicó a Almada, Cocca y Mohamed. El notebook 10 descarga sus datos de StatsBomb.</li>
+  </ul>
+  <h3>Qué cubren los datos</h3>
+  <div class="scroll"><table class="tt">
+    <thead><tr><th>Técnico y equipo</th><th>Torneos incluidos</th><th>Partidos</th></tr></thead>
+    <tbody>
+      <tr><td>André Jardine · América</td><td style="white-space:normal">Apertura 2023, Clausura 2024, Apertura 2024, Clausura 2025, Apertura 2025, Clausura 2026 (temporadas 2023/24 a 2025/26)</td><td>129</td></tr>
+      <tr><td>Jorge Almada · Pachuca</td><td style="white-space:normal">Clausura 2022, Apertura 2022, Clausura 2023, Apertura 2023, Clausura 2024, Apertura 2024, Clausura 2025</td><td>139</td></tr>
+      <tr><td>Diego Cocca · Atlas</td><td style="white-space:normal">Apertura 2021, Clausura 2022, Apertura 2022, Apertura 2025 (13 de 17), Clausura 2026, Apertura 2026 (1 partido)</td><td>96</td></tr>
+      <tr><td>Antonio Mohamed · Toluca</td><td style="white-space:normal">Clausura 2025, Apertura 2025, Clausura 2026, Apertura 2026 (12 partidos, en curso)</td><td>77</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Los partidos incluyen torneo regular y liguilla. El torneo se asigna por fecha: de julio en adelante es Apertura, antes es Clausura.</p>
+  <div class="callout"><b>Lo que este trabajo no puede afirmar.</b> El análisis principal es de un solo entrenador; el contraste con otros tres reproduce el framework pero con muestras más pequeñas y de otras épocas. El holdout del modelo tiene 38 partidos, no incluye la fuerza del rival y predice con el primer tiempo, no antes del partido. Gran parte de lo que el modelo predice ya se sabe por cómo va el partido al descanso, y la mejora sobre el ingenuo es menor fuera de América. El análisis causal es un resultado nulo con poca potencia. El PPDA solo es válido de forma relativa porque StatsBomb registra los duelos de forma más granular que otros proveedores.</div>
+</section>
+
+<footer>
+  <span>Diego Díaz Abascal y Emiliano Chain Ruiz · Hackathon ISAC 2026 · ITAM Sports Analytics Conference, con Club América como patrocinador.</span>
+  <span>Notebooks 01 a 10 y framework_analitico.py reproducen todos los números de este documento.</span>
+</footer>
+</div>
+
+<script>
+var COMP = [{"entrenador": "André Jardine", "equipo": "América", "n_partidos": 129, "temporadas": ["2023/2024", "2024/2025", "2025/2026"], "estilo": {"posesion_pct": 50.856, "field_tilt_relativo_pct": 58.58, "ppda": 3.45, "tiros_favor": 13.798, "tiros_contra": 11.155, "xg_favor": 1.599, "xg_contra": 0.935, "pct_pases_largos": 41.629}, "altura_linea_x": 42.04, "contrapresion_pct": 49.1, "reaccion_mediana_s": 2.0, "corner": {"n": 681, "pct_remate": 42.6, "xg_por_partido": 0.2}, "resultados": {"Gana": 68, "Empata": 36, "Pierde": 25}, "perdiendo_descanso": {"n": 23, "recupera_punto_pct": 56.5}, "modelo": {"n_train": 90, "n_holdout": 39, "logloss_ingenuo": 1.115, "logloss_marcador": 0.908, "logloss_completo": 0.859, "mejora_vs_ingenuo_pct": 22.9, "accuracy": 0.615}, "causal": {"n_eventos": 88, "n_tratados": 27, "ingenua_pp": -8.6, "emparejado_pp": -5.8, "ic95_pp": [-24.2, 11.6]}}, {"entrenador": "Jorge Almada", "equipo": "Pachuca", "n_partidos": 139, "temporadas": ["2021/2022", "2022/2023", "2023/2024", "2024/2025"], "estilo": {"posesion_pct": 50.327, "field_tilt_relativo_pct": 53.173, "ppda": 2.759, "tiros_favor": 16.18, "tiros_contra": 11.734, "xg_favor": 1.484, "xg_contra": 1.187, "pct_pases_largos": 44.11}, "altura_linea_x": 43.41, "contrapresion_pct": 51.4, "reaccion_mediana_s": 2.0, "corner": {"n": 823, "pct_remate": 39.7, "xg_por_partido": 0.196}, "resultados": {"Gana": 66, "Pierde": 41, "Empata": 32}, "perdiendo_descanso": {"n": 40, "recupera_punto_pct": 30.0}, "modelo": {"n_train": 97, "n_holdout": 42, "logloss_ingenuo": 1.208, "logloss_marcador": 0.989, "logloss_completo": 1.105, "mejora_vs_ingenuo_pct": 8.6, "accuracy": 0.524}, "causal": {"n_eventos": 138, "n_tratados": 49, "ingenua_pp": 4.5, "emparejado_pp": -4.5, "ic95_pp": [-25.9, 20.7]}}, {"entrenador": "Diego Cocca", "equipo": "Atlas", "n_partidos": 96, "temporadas": ["2021/2022", "2022/2023", "2025/2026", "2026/2027"], "estilo": {"posesion_pct": 49.411, "field_tilt_relativo_pct": 49.783, "ppda": 3.129, "tiros_favor": 11.708, "tiros_contra": 13.479, "xg_favor": 1.157, "xg_contra": 1.283, "pct_pases_largos": 48.771}, "altura_linea_x": 43.85, "contrapresion_pct": 45.4, "reaccion_mediana_s": 2.0, "corner": {"n": 389, "pct_remate": 47.6, "xg_por_partido": 0.16}, "resultados": {"Pierde": 35, "Gana": 34, "Empata": 27}, "perdiendo_descanso": {"n": 26, "recupera_punto_pct": 23.1}, "modelo": {"n_train": 67, "n_holdout": 29, "logloss_ingenuo": 1.087, "logloss_marcador": 0.783, "logloss_completo": 0.864, "mejora_vs_ingenuo_pct": 20.5, "accuracy": 0.655}, "causal": {"n_eventos": 75, "n_tratados": 22, "ingenua_pp": 9.5, "emparejado_pp": 17.8, "ic95_pp": [-8.0, 46.7]}}, {"entrenador": "Antonio Mohamed", "equipo": "Toluca", "n_partidos": 77, "temporadas": ["2024/2025", "2025/2026", "2026/2027"], "estilo": {"posesion_pct": 50.257, "field_tilt_relativo_pct": 55.113, "ppda": 3.156, "tiros_favor": 16.844, "tiros_contra": 11.455, "xg_favor": 1.921, "xg_contra": 1.172, "pct_pases_largos": 44.317}, "altura_linea_x": 40.89, "contrapresion_pct": 51.2, "reaccion_mediana_s": 2.0, "corner": {"n": 421, "pct_remate": 47.5, "xg_por_partido": 0.263}, "resultados": {"Gana": 42, "Empata": 20, "Pierde": 15}, "perdiendo_descanso": {"n": 15, "recupera_punto_pct": 46.7}, "modelo": {"n_train": 54, "n_holdout": 23, "logloss_ingenuo": 1.255, "logloss_marcador": 1.15, "logloss_completo": 2.215, "mejora_vs_ingenuo_pct": -76.4, "accuracy": 0.478}, "causal": {"n_eventos": 56, "n_tratados": 19, "ingenua_pp": 10.0, "emparejado_pp": 10.4, "ic95_pp": [-25.0, 47.7]}}];
+var DATA = {"holdout": [{"match_date": "2025-07-12", "rival": "Juárez", "localidad": "Visitante", "resultado_final": "Empata", "goles_favor_1t": 1, "goles_contra_1t": 0, "p_Gana": 0.753, "p_Empata": 0.144, "p_Pierde": 0.104}, {"match_date": "2025-07-17", "rival": "Tijuana", "localidad": "Local", "resultado_final": "Gana", "goles_favor_1t": 1, "goles_contra_1t": 0, "p_Gana": 0.904, "p_Empata": 0.078, "p_Pierde": 0.018}, {"match_date": "2025-07-27", "rival": "Necaxa", "localidad": "Visitante", "resultado_final": "Empata", "goles_favor_1t": 1, "goles_contra_1t": 1, "p_Gana": 0.433, "p_Empata": 0.212, "p_Pierde": 0.355}, {"match_date": "2025-08-10", "rival": "Querétaro", "localidad": "Local", "resultado_final": "Gana", "goles_favor_1t": 1, "goles_contra_1t": 0, "p_Gana": 0.866, "p_Empata": 0.116, "p_Pierde": 0.018}, {"match_date": "2025-08-17", "rival": "Tigres UANL", "localidad": "Visitante", "resultado_final": "Gana", "goles_favor_1t": 1, "goles_contra_1t": 1, "p_Gana": 0.236, "p_Empata": 0.667, "p_Pierde": 0.097}, {"match_date": "2025-08-25", "rival": "Atlas", "localidad": "Visitante", "resultado_final": "Gana", "goles_favor_1t": 1, "goles_contra_1t": 1, "p_Gana": 0.214, "p_Empata": 0.694, "p_Pierde": 0.092}, {"match_date": "2025-08-31", "rival": "Pachuca", "localidad": "Local", "resultado_final": "Gana", "goles_favor_1t": 1, "goles_contra_1t": 0, "p_Gana": 0.96, "p_Empata": 0.033, "p_Pierde": 0.007}, {"match_date": "2025-09-14", "rival": "Guadalajara", "localidad": "Local", "resultado_final": "Pierde", "goles_favor_1t": 0, "goles_contra_1t": 0, "p_Gana": 0.421, "p_Empata": 0.455, "p_Pierde": 0.123}, {"match_date": "2025-09-21", "rival": "Monterrey", "localidad": "Visitante", "resultado_final": "Empata", "goles_favor_1t": 0, "goles_contra_1t": 2, "p_Gana": 0.006, "p_Empata": 0.734, "p_Pierde": 0.26}, {"match_date": "2025-09-25", "rival": "Atlético San Luis", "localidad": "Visitante", "resultado_final": "Gana", "goles_favor_1t": 0, "goles_contra_1t": 0, "p_Gana": 0.318, "p_Empata": 0.481, "p_Pierde": 0.202}, {"match_date": "2025-09-28", "rival": "Pumas UNAM", "localidad": "Local", "resultado_final": "Gana", "goles_favor_1t": 0, "goles_contra_1t": 1, "p_Gana": 0.886, "p_Empata": 0.065, "p_Pierde": 0.049}, {"match_date": "2025-10-05", "rival": "Santos Laguna", "localidad": "Local", "resultado_final": "Gana", "goles_favor_1t": 1, "goles_contra_1t": 0, "p_Gana": 0.901, "p_Empata": 0.088, "p_Pierde": 0.01}, {"match_date": "2025-10-19", "rival": "Cruz Azul", "localidad": "Visitante", "resultado_final": "Pierde", "goles_favor_1t": 1, "goles_contra_1t": 1, "p_Gana": 0.579, "p_Empata": 0.163, "p_Pierde": 0.258}, {"match_date": "2025-10-22", "rival": "Puebla", "localidad": "Local", "resultado_final": "Gana", "goles_favor_1t": 0, "goles_contra_1t": 0, "p_Gana": 0.655, "p_Empata": 0.209, "p_Pierde": 0.135}, {"match_date": "2025-10-25", "rival": "Mazatlán", "localidad": "Visitante", "resultado_final": "Empata", "goles_favor_1t": 1, "goles_contra_1t": 2, "p_Gana": 0.029, "p_Empata": 0.784, "p_Pierde": 0.187}, {"match_date": "2025-11-02", "rival": "León", "localidad": "Local", "resultado_final": "Gana", "goles_favor_1t": 0, "goles_contra_1t": 0, "p_Gana": 0.613, "p_Empata": 0.276, "p_Pierde": 0.111}, {"match_date": "2025-11-09", "rival": "Toluca", "localidad": "Visitante", "resultado_final": "Pierde", "goles_favor_1t": 0, "goles_contra_1t": 1, "p_Gana": 0.073, "p_Empata": 0.272, "p_Pierde": 0.655}, {"match_date": "2025-11-27", "rival": "Monterrey", "localidad": "Visitante", "resultado_final": "Pierde", "goles_favor_1t": 0, "goles_contra_1t": 1, "p_Gana": 0.012, "p_Empata": 0.744, "p_Pierde": 0.245}, {"match_date": "2025-11-29", "rival": "Monterrey", "localidad": "Local", "resultado_final": "Gana", "goles_favor_1t": 1, "goles_contra_1t": 0, "p_Gana": 0.886, "p_Empata": 0.085, "p_Pierde": 0.029}, {"match_date": "2026-01-10", "rival": "Tijuana", "localidad": "Visitante", "resultado_final": "Empata", "goles_favor_1t": 0, "goles_contra_1t": 0, "p_Gana": 0.189, "p_Empata": 0.485, "p_Pierde": 0.326}, {"match_date": "2026-01-15", "rival": "Atlético San Luis", "localidad": "Local", "resultado_final": "Pierde", "goles_favor_1t": 0, "goles_contra_1t": 0, "p_Gana": 0.719, "p_Empata": 0.079, "p_Pierde": 0.202}, {"match_date": "2026-01-19", "rival": "Pachuca", "localidad": "Visitante", "resultado_final": "Empata", "goles_favor_1t": 0, "goles_contra_1t": 0, "p_Gana": 0.115, "p_Empata": 0.645, "p_Pierde": 0.24}, {"match_date": "2026-01-31", "rival": "Necaxa", "localidad": "Local", "resultado_final": "Gana", "goles_favor_1t": 2, "goles_contra_1t": 0, "p_Gana": 0.964, "p_Empata": 0.023, "p_Pierde": 0.012}, {"match_date": "2026-02-08", "rival": "Monterrey", "localidad": "Local", "resultado_final": "Gana", "goles_favor_1t": 0, "goles_contra_1t": 0, "p_Gana": 0.589, "p_Empata": 0.285, "p_Pierde": 0.126}, {"match_date": "2026-02-15", "rival": "Guadalajara", "localidad": "Visitante", "resultado_final": "Pierde", "goles_favor_1t": 0, "goles_contra_1t": 1, "p_Gana": 0.084, "p_Empata": 0.358, "p_Pierde": 0.558}, {"match_date": "2026-02-21", "rival": "Puebla", "localidad": "Visitante", "resultado_final": "Gana", "goles_favor_1t": 1, "goles_contra_1t": 0, "p_Gana": 0.888, "p_Empata": 0.082, "p_Pierde": 0.03}, {"match_date": "2026-03-01", "rival": "Tigres UANL", "localidad": "Local", "resultado_final": "Pierde", "goles_favor_1t": 0, "goles_contra_1t": 2, "p_Gana": 0.01, "p_Empata": 0.562, "p_Pierde": 0.428}, {"match_date": "2026-03-05", "rival": "Juárez", "localidad": "Local", "resultado_final": "Pierde", "goles_favor_1t": 0, "goles_contra_1t": 1, "p_Gana": 0.438, "p_Empata": 0.177, "p_Pierde": 0.385}, {"match_date": "2026-03-07", "rival": "Querétaro", "localidad": "Visitante", "resultado_final": "Gana", "goles_favor_1t": 1, "goles_contra_1t": 1, "p_Gana": 0.675, "p_Empata": 0.197, "p_Pierde": 0.128}, {"match_date": "2026-03-16", "rival": "Mazatlán", "localidad": "Local", "resultado_final": "Gana", "goles_favor_1t": 1, "goles_contra_1t": 0, "p_Gana": 0.989, "p_Empata": 0.007, "p_Pierde": 0.004}, {"match_date": "2026-03-22", "rival": "Pumas UNAM", "localidad": "Visitante", "resultado_final": "Pierde", "goles_favor_1t": 0, "goles_contra_1t": 0, "p_Gana": 0.162, "p_Empata": 0.605, "p_Pierde": 0.232}, {"match_date": "2026-04-05", "rival": "Santos Laguna", "localidad": "Visitante", "resultado_final": "Empata", "goles_favor_1t": 0, "goles_contra_1t": 0, "p_Gana": 0.358, "p_Empata": 0.39, "p_Pierde": 0.252}, {"match_date": "2026-04-12", "rival": "Cruz Azul", "localidad": "Local", "resultado_final": "Empata", "goles_favor_1t": 1, "goles_contra_1t": 1, "p_Gana": 0.609, "p_Empata": 0.08, "p_Pierde": 0.311}, {"match_date": "2026-04-19", "rival": "Toluca", "localidad": "Local", "resultado_final": "Gana", "goles_favor_1t": 1, "goles_contra_1t": 0, "p_Gana": 0.917, "p_Empata": 0.032, "p_Pierde": 0.05}, {"match_date": "2026-04-22", "rival": "León", "localidad": "Visitante", "resultado_final": "Gana", "goles_favor_1t": 2, "goles_contra_1t": 2, "p_Gana": 0.526, "p_Empata": 0.059, "p_Pierde": 0.415}, {"match_date": "2026-04-26", "rival": "Atlas", "localidad": "Local", "resultado_final": "Pierde", "goles_favor_1t": 0, "goles_contra_1t": 0, "p_Gana": 0.764, "p_Empata": 0.121, "p_Pierde": 0.114}, {"match_date": "2026-05-03", "rival": "Pumas UNAM", "localidad": "Local", "resultado_final": "Empata", "goles_favor_1t": 1, "goles_contra_1t": 2, "p_Gana": 0.722, "p_Empata": 0.063, "p_Pierde": 0.215}, {"match_date": "2026-05-11", "rival": "Pumas UNAM", "localidad": "Visitante", "resultado_final": "Empata", "goles_favor_1t": 2, "goles_contra_1t": 3, "p_Gana": 0.092, "p_Empata": 0.842, "p_Pierde": 0.066}]};
+var H = DATA.holdout;
+function pct(x, d) { return (x * 100).toFixed(d === undefined ? 1 : d); }
+function pred(r) { var m = Math.max(r.p_Gana, r.p_Empata, r.p_Pierde); return m === r.p_Gana ? "Gana" : (m === r.p_Pierde ? "Pierde" : "Empata"); }
+
+/* mini charts por temporada */
+(function () {
+  var seasons = ["23/24", "24/25", "25/26"];
+  var items = [
+    { t: "PPDA (menor = más presión)", v: [3.98, 3.23, 3.07], f: 2 },
+    { t: "Field tilt relativo %", v: [56.65, 58.36, 61.18], f: 1 },
+    { t: "Tiros en contra / partido", v: [12.20, 10.96, 10.13], f: 1 },
+    { t: "xG a favor / partido", v: [1.82, 1.55, 1.39], f: 2 }
+  ];
+  var out = "";
+  items.forEach(function (it) {
+    var W = 200, Hh = 84, px = 22, mn = Math.min.apply(null, it.v), mx = Math.max.apply(null, it.v), rg = (mx - mn) || 1;
+    function X(i) { return px + i * (W - 2 * px) / 2; }
+    function Y(v) { return 20 + (1 - (v - mn) / rg) * 36; }
+    var pts = it.v.map(function (v, i) { return X(i) + "," + Y(v); }).join(" ");
+    var s = '<svg viewBox="0 0 ' + W + ' ' + Hh + '" role="img" aria-label="' + it.t + ': ' + it.v.join(", ") + '">' +
+      '<polyline points="' + pts + '" fill="none" style="stroke:var(--navy)" stroke-width="2"/>';
+    it.v.forEach(function (v, i) {
+      s += '<circle cx="' + X(i) + '" cy="' + Y(v) + '" r="' + (i === 2 ? 5 : 3.5) + '" style="fill:' + (i === 2 ? "var(--gold)" : "var(--navy)") + '"/>' +
+        '<text class="v" x="' + X(i) + '" y="' + (Y(v) - 9) + '" text-anchor="middle">' + v.toFixed(it.f) + '</text>' +
+        '<text x="' + X(i) + '" y="' + (Hh - 8) + '" text-anchor="middle">' + seasons[i] + '</text>';
+    });
+    out += '<div class="mini"><span>' + it.t + '</span>' + s + '</svg></div>';
+  });
+  document.getElementById("minis").innerHTML = out;
+})();
+
+/* matriz de confusión desde los datos */
+(function () {
+  var cl = ["Gana", "Empata", "Pierde"], m = {};
+  cl.forEach(function (a) { m[a] = { Gana: 0, Empata: 0, Pierde: 0 }; });
+  H.forEach(function (r) { m[r.resultado_final][pred(r)]++; });
+  var h = '<table><thead><tr><th>Real \\ Predicho</th><th>Gana</th><th>Empata</th><th>Pierde</th><th>Aciertos</th></tr></thead><tbody>';
+  cl.forEach(function (a) {
+    var tot = m[a].Gana + m[a].Empata + m[a].Pierde;
+    h += '<tr><td>' + a + ' (' + tot + ')</td><td>' + m[a].Gana + '</td><td>' + m[a].Empata + '</td><td>' + m[a].Pierde + '</td><td>' + m[a][a] + ' de ' + tot + '</td></tr>';
+  });
+  var cf2 = document.getElementById("confusion"); if (cf2) cf2.innerHTML = h + "</tbody></table>";
+})();
+
+/* forest plot de sensibilidad */
+(function () {
+  var rows = [
+    ["5 → 15 · n=8", 25.5, -32.5, 51.1, true],
+    ["10 → 10 · n=27", -3.2, -21.2, 13.4],
+    ["10 → 15 · n=27 (principal)", -5.8, -24.2, 11.6, false, true],
+    ["10 → 20 · n=27", -8.2, -27.9, 12.3],
+    ["15 → 15 · n=40", -8.1, -25.6, 8.5]
+  ];
+  var W = 760, L = 240, R = 20, rowH = 34, top = 26, Hh = top + rows.length * rowH + 26, mn = -40, mx = 55;
+  function X(v) { return L + (v - mn) / (mx - mn) * (W - L - R); }
+  var s = '<div class="scroll"><svg viewBox="0 0 ' + W + ' ' + Hh + '" style="min-width:560px;width:100%;height:auto" role="img" aria-label="Efecto emparejado con intervalo de confianza por combinación de ventanas">';
+  [-40, -20, 0, 20, 40].forEach(function (t) {
+    s += '<line x1="' + X(t) + '" x2="' + X(t) + '" y1="' + (top - 6) + '" y2="' + (Hh - 22) + '" style="stroke:' + (t === 0 ? "var(--fg)" : "var(--line)") + '" stroke-width="' + (t === 0 ? 1.5 : 1) + '"/>' +
+      '<text x="' + X(t) + '" y="' + (Hh - 6) + '" text-anchor="middle">' + (t > 0 ? "+" : "") + t + '</text>';
+  });
+  rows.forEach(function (r, i) {
+    var y = top + i * rowH + 10, main = r[5], weak = r[4];
+    s += '<text x="' + (L - 12) + '" y="' + (y + 4) + '" text-anchor="end" class="' + (main ? "v" : "") + '">' + r[0] + '</text>' +
+      '<line x1="' + X(r[2]) + '" x2="' + X(r[3]) + '" y1="' + y + '" y2="' + y + '" style="stroke:' + (weak ? "var(--neutral)" : "var(--gold)") + '" stroke-width="6" stroke-linecap="round"/>' +
+      '<circle cx="' + X(r[1]) + '" cy="' + y + '" r="5" style="fill:' + (weak ? "var(--neutral)" : "var(--navy)") + '"/>';
+  });
+  s += '<text x="' + (W - R) + '" y="' + (top - 10) + '" text-anchor="end">pp de diferencia en probabilidad de anotar</text></svg></div>';
+  document.getElementById("forest").innerHTML = s;
+})();
+
+/* semáforo + lista de partidos */
+(function () {
+  var g = H.filter(function (r) { return r.p_Pierde < 0.10; });
+  var rj = H.filter(function (r) { return r.p_Pierde >= 0.40; });
+  var md = H.filter(function (r) { return r.p_Pierde >= 0.10 && r.p_Pierde < 0.40; });
+  function cnt(a, k) { return a.filter(function (r) { return r.resultado_final === k; }).length; }
+  var tg = document.getElementById("t-green"); if (tg) tg.textContent = cnt(g, "Pierde") + " de " + g.length;
+  document.getElementById("sem").innerHTML =
+    '<div class="light g"><span>Verde · riesgo de perder &lt; 10%</span><b>' + cnt(g, "Pierde") + ' derrotas de ' + g.length + '</b><small>' + cnt(g, "Gana") + ' victorias, ' + cnt(g, "Empata") + ' empate</small></div>' +
+    '<div class="light y"><span>Amarillo · 10% a 40%</span><b>' + cnt(md, "Pierde") + ' derrotas de ' + md.length + '</b><small>' + cnt(md, "Gana") + ' victorias, ' + cnt(md, "Empata") + ' empates</small></div>' +
+    '<div class="light r"><span>Rojo · riesgo de perder ≥ 40%</span><b>' + cnt(rj, "Pierde") + ' derrotas de ' + rj.length + '</b><small>' + cnt(rj, "Gana") + ' victoria, ' + cnt(rj, "Empata") + ' empates</small></div>';
+  var box = document.getElementById("games");
+  function lite(r) { return r.p_Pierde < 0.10 ? ["g", "Verde"] : (r.p_Pierde >= 0.40 ? ["r", "Rojo"] : ["y", "Amarillo"]); }
+  function render(f) {
+    var rows = H.filter(function (r) {
+      if (f === "g") return r.p_Pierde < 0.10;
+      if (f === "y") return r.p_Pierde >= 0.10 && r.p_Pierde < 0.40;
+      if (f === "r") return r.p_Pierde >= 0.40;
+      if (f === "lost") return r.resultado_final === "Pierde";
+      return true;
+    });
+    box.innerHTML = rows.map(function (r) {
+      var ht = r.goles_favor_1t + "-" + r.goles_contra_1t, L = lite(r);
+      return '<div class="game"><div class="who"><b>' + r.rival + '</b><small>' + r.match_date + ' · ' + (r.localidad === "Local" ? "local" : "visita") + ' · descanso ' + ht + '</small></div>' +
+        '<div class="sl"><span class="dot ' + L[0] + '"></span><b>' + L[1] + '</b><small>riesgo de perder ' + pct(r.p_Pierde, 0) + '% · gana ' + pct(r.p_Gana, 0) + '% · empata ' + pct(r.p_Empata, 0) + '%</small></div>' +
+        '<span class="res ' + r.resultado_final + '">' + (r.resultado_final === "Pierde" ? "Perdió" : r.resultado_final === "Gana" ? "Ganó" : "Empató") + '</span></div>';
+    }).join("") || '<div class="game"><div class="who">Sin partidos en este filtro.</div></div>';
+  }
+  render("all");
+  document.querySelectorAll(".chip").forEach(function (c) {
+    c.onclick = function () {
+      document.querySelectorAll(".chip").forEach(function (o) { o.setAttribute("aria-pressed", "false"); });
+      c.setAttribute("aria-pressed", "true"); render(c.dataset.f);
+    };
+  });
+})();
+
+
+/* contraste con otros técnicos */
+(function () {
+  var K = ["var(--k1)", "var(--k2)", "var(--k3)", "var(--k4)"];
+  var names = COMP.map(function (c) { return c.entrenador.replace("André ", "").replace("Jorge ", "J. ").replace("Antonio ", "A. ").replace("Diego ", "D. "); });
+  var teams = COMP.map(function (c) { return c.equipo; });
+  var sel = -1;
+  var metrics = [
+    { l: "Field tilt relativo %", s: "dominio del territorio", f: function (c) { return c.estilo.field_tilt_relativo_pct; }, d: 1 },
+    { l: "Posesión %", s: "", f: function (c) { return c.estilo.posesion_pct; }, d: 1 },
+    { l: "PPDA", s: "menor = más presión", f: function (c) { return c.estilo.ppda; }, d: 2 },
+    { l: "xG a favor / partido", s: "", f: function (c) { return c.estilo.xg_favor; }, d: 2 },
+    { l: "xG en contra / partido", s: "menor es mejor", f: function (c) { return c.estilo.xg_contra; }, d: 2 },
+    { l: "Pases largos %", s: "directividad", f: function (c) { return c.estilo.pct_pases_largos; }, d: 1 },
+    { l: "Altura de línea (x)", s: "de 0 a 120", f: function (c) { return c.altura_linea_x; }, d: 1 },
+    { l: "Contrapresión %", s: "pérdidas con presión en 8 s", f: function (c) { return c.contrapresion_pct; }, d: 1 },
+    { l: "Córner que termina en remate %", s: "", f: function (c) { return c.corner.pct_remate; }, d: 1 }
+  ];
+  function chips() {
+    var h = "";
+    COMP.forEach(function (c, i) {
+      h += '<button class="kchip" data-i="' + i + '" aria-pressed="' + (sel === i) + '"><i style="background:' + K[i] + '"></i>' + names[i] + ' · ' + teams[i] + ' (' + c.n_partidos + ')</button>';
+    });
+    var el = document.getElementById("kchips"); el.innerHTML = h;
+    el.querySelectorAll(".kchip").forEach(function (b) { b.onclick = function () { var i = +b.dataset.i; sel = (sel === i) ? -1 : i; chips(); rows(); bars(); }; });
+  }
+  function rows() {
+    var out = "";
+    metrics.forEach(function (m) {
+      var v = COMP.map(m.f), mn = Math.min.apply(null, v), mx = Math.max.apply(null, v), pad = (mx - mn) * 0.15 || 1;
+      mn -= pad; mx += pad;
+      var W = 520;
+      function X(x) { return 8 + (x - mn) / (mx - mn) * (W - 16); }
+      var svg = '<svg viewBox="0 0 ' + W + ' 30" role="img" aria-label="' + m.l + ': ' + v.map(function (x, i) { return names[i] + ' ' + x.toFixed(m.d); }).join(', ') + '"><line x1="8" x2="' + (W - 8) + '" y1="15" y2="15" style="stroke:var(--line)" stroke-width="2"/>';
+      v.forEach(function (x, i) {
+        var dim = (sel >= 0 && sel !== i) ? " dim" : "";
+        svg += '<circle class="' + dim.trim() + '" cx="' + X(x) + '" cy="15" r="' + (i === 0 ? 9 : 7) + '" style="fill:' + K[i] + '"><title>' + names[i] + ': ' + x.toFixed(m.d) + '</title></circle>';
+      });
+      svg += '</svg>';
+      var vals = '<div class="vals">' + v.map(function (x, i) { return '<span style="color:' + K[i] + '" class="' + ((sel >= 0 && sel !== i) ? "dim" : "") + '">' + x.toFixed(m.d) + '</span>'; }).join("") + '</div>';
+      out += '<div class="mrow"><div class="ml">' + m.l + (m.s ? '<small>' + m.s + '</small>' : '') + '</div><div>' + svg + vals + '</div></div>';
+    });
+    document.getElementById("mrows").innerHTML = out;
+  }
+  var CAMP = [[11, 8, 3], [4, 1, 1], [10, 3, 2], [9, 5, 2]];
+  function bars() {
+    var h = "";
+    COMP.forEach(function (c, i) {
+      var p = c.perdiendo_descanso, dim = (sel >= 0 && sel !== i) ? " dim" : "";
+      h += '<div class="cbar' + dim + '"><span>' + names[i] + '</span><div class="tr"><i style="width:' + p.recupera_punto_pct + '%;background:' + K[i] + '"></i></div><b>' + p.recupera_punto_pct.toFixed(1) + '% · n=' + p.n + '</b><small class="cn">' + CAMP[i][0] + ' de esos ' + p.n + ' partidos fueron en torneo' + (CAMP[i][2] > 1 ? 's' : '') + ' campeón' + (CAMP[i][2] > 1 ? 'es' : '') + ' (sacó punto en ' + CAMP[i][1] + ')</small></div>';
+    });
+    document.getElementById("comeback").innerHTML = h;
+  }
+  chips(); rows(); bars();
+
+  /* tabla del modelo */
+  var t = '<table><thead><tr><th>Técnico</th><th>Entren. / prueba</th><th>Ingenuo</th><th>Completo</th><th>Mejora vs. ingenuo</th></tr></thead><tbody>';
+  COMP.forEach(function (c, i) {
+    var m = c.modelo, best = Math.min(m.logloss_ingenuo, m.logloss_completo);
+    function cell(x) { return '<td>' + (x === best ? '<b>' + x.toFixed(3) + '</b>' : x.toFixed(3)) + '</td>'; }
+    t += '<tr' + (i === 0 ? ' class="hl"' : '') + '><td>' + names[i] + ' · ' + teams[i] + '</td><td>' + m.n_train + ' / ' + m.n_holdout + '</td>' + cell(m.logloss_ingenuo) + cell(m.logloss_completo) + '<td>' + (m.mejora_vs_ingenuo_pct > 0 ? "+" : "") + m.mejora_vs_ingenuo_pct.toFixed(1) + '%</td></tr>';
+  });
+  var cm = document.getElementById("cmodel"); if (cm) cm.innerHTML = t + '</tbody></table>';
+
+  /* forest causal */
+  var W = 760, L = 210, R = 20, rowH = 36, top = 26, Hh = top + COMP.length * rowH + 26, mn = -40, mx = 55;
+  function X(v) { return L + (v - mn) / (mx - mn) * (W - L - R); }
+  var s = '<div class="scroll"><svg viewBox="0 0 ' + W + ' ' + Hh + '" style="min-width:560px;width:100%;height:auto" role="img" aria-label="Efecto emparejado con IC95 por entrenador">';
+  [-40, -20, 0, 20, 40].forEach(function (tk) {
+    s += '<line x1="' + X(tk) + '" x2="' + X(tk) + '" y1="' + (top - 6) + '" y2="' + (Hh - 22) + '" style="stroke:' + (tk === 0 ? "var(--fg)" : "var(--line)") + '" stroke-width="' + (tk === 0 ? 1.5 : 1) + '"/><text x="' + X(tk) + '" y="' + (Hh - 6) + '" text-anchor="middle">' + (tk > 0 ? "+" : "") + tk + '</text>';
+  });
+  COMP.forEach(function (c, i) {
+    var y = top + i * rowH + 10, ca = c.causal;
+    s += '<text x="' + (L - 12) + '" y="' + (y + 4) + '" text-anchor="end" class="v">' + names[i] + ' (' + ca.n_tratados + ' de ' + ca.n_eventos + ')</text>' +
+      '<line x1="' + X(ca.ic95_pp[0]) + '" x2="' + X(ca.ic95_pp[1]) + '" y1="' + y + '" y2="' + y + '" style="stroke:' + K[i] + '" stroke-opacity=".55" stroke-width="7" stroke-linecap="round"/>' +
+      '<circle cx="' + X(ca.emparejado_pp) + '" cy="' + y + '" r="5.5" style="fill:' + K[i] + ';stroke:var(--fg)" stroke-width="1.5"/>' +
+      '<text x="' + (X(ca.ic95_pp[1]) + 10) + '" y="' + (y + 4) + '">' + (ca.emparejado_pp > 0 ? "+" : "") + ca.emparejado_pp.toFixed(1) + '</text>';
+  });
+  s += '<text x="' + (W - R) + '" y="' + (top - 10) + '" text-anchor="end">pp · (tratados de eventos)</text></svg></div>';
+  var cf = document.getElementById("cforest"); if (cf) cf.innerHTML = s;
+})();
+
+/* drills */
+(function () {
+  var LIMIT = 240;
+var BANK = [
+  {
+    id: "d_toluca", kind: "descanso",
+    tag: "Descanso · modelo predictivo",
+    title: "Toluca – América, visitante",
+    sit: "Torneo Apertura 2025, 9 de noviembre. Medio tiempo: América pierde 0-1 en Toluca. Estas son sus cifras del primer tiempo.",
+    stats: [["Marcador", "0 – 1"], ["xG propio / rival", "0.18 / 0.44"], ["Posesión", "50.9%"], ["PPDA", "6.08"]],
+    statsNote: "PPDA alto significa presionar poco: 6.08 es de los más altos de la temporada 2025/26.",
+    ctx: { table: '<table><thead><tr><th>Tramo del 1T</th><th>xG Amér.</th><th>xG Toluca</th><th>Tiros</th><th>Field tilt</th><th>Su media</th></tr></thead><tbody>' +
+      '<tr><td>0-15</td><td>0.13</td><td>0.12</td><td>1-1</td><td class="lo">30%</td><td>58%</td></tr>' +
+      '<tr><td>15-30</td><td>0.00</td><td>0.07</td><td>0-3</td><td class="lo">40%</td><td>60%</td></tr>' +
+      '<tr><td>30-45+</td><td>0.05</td><td>0.25</td><td>1-5</td><td class="lo">24%</td><td>56%</td></tr></tbody></table>',
+      note: "Toluca anotó al 39' y era el campeón vigente. El partido fue peor cada 15 minutos: desde el minuto 15 América casi no generó peligro y completó entre 46% y 51% de los pases del partido, contra 55% en su media. Field tilt: porcentaje de acciones en zona de ataque que son propias (su media es la de los 129 partidos de Jardine en ese tramo)." },
+    q: "Es el descanso. ¿Qué haces?",
+    opts: [
+      { t: "Mantener el planteamiento", v: "no", why: "El modelo estima 65% de derrota si el segundo tiempo se parece al primero. Mantener es la opción que menos cambia esa cifra." },
+      { t: "Ajustar: presionar más arriba y subir el volumen ofensivo", v: "ok", why: "Es la lectura que respalda el modelo: el primer tiempo mostró poca presión (PPDA 6.08) y poca amenaza (xG 0.18). Ojo: el modelo dice qué pasa si nada cambia, no demuestra que ajustar funcione." },
+      { t: "Cerrar el partido con un cambio defensivo", v: "no", why: "Con 0.18 de xG propio y perdiendo, el patrón de datos no sostiene replegarse: la derrota ya es el escenario más probable." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Lo que dice el modelo al descanso</h3>' +
+        '<div class="probbar" role="img" aria-label="Gana 7.3%, empata 27.2%, pierde 65.5%"><div class="pb-g" style="width:7.3%"></div><div class="pb-e" style="width:27.2%">27%</div><div class="pb-p" style="width:65.5%">Pierde 65.5%</div></div>' +
+        '<p class="note">Gana 7.3% · Empata 27.2% · Pierde 65.5%. El modelo compara este primer tiempo con el de partidos anteriores de Jardine (se explica justo debajo de este simulador). Probado en 38 partidos que no vio, le da en promedio 43% de probabilidad a lo que ocurre; un modelo que solo repite el historial, 34%.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>América terminó perdiendo por 2 goles. El modelo acertó la clase, pero es un solo partido. En la temporada acierta el 83% de las victorias y solo el 20% de las derrotas: cuando avisa de una derrota casi siempre tiene razón, aunque avisa pocas.</p></div>';
+    }
+  },
+  {
+    id: "g_cruzazul", kind: "gol",
+    tag: "Gol en contra · análisis causal",
+    title: "Cruz Azul – América",
+    sit: "19 de mayo de 2025, minuto 56. Cruz Azul anota y América queda perdiendo. Aún quedan unos 35 minutos.",
+    stats: [["Minuto", "56"], ["Situación", "Perdiendo"], ["Cambios hechos", "0"], ["Tiempo restante", "~35 min"]],
+    statsNote: "",
+    ctx: { table: '<table><thead><tr><th>Hasta el minuto 56</th><th>América</th><th>Cruz Azul</th></tr></thead><tbody>' +
+      '<tr><td>xG acumulado</td><td>0.32</td><td>0.56</td></tr><tr><td>Tiros</td><td>5</td><td>2</td></tr>' +
+      '<tr><td>Field tilt</td><td>77%</td><td>23%</td></tr><tr><td>Min. 41-56: tiros / xG</td><td>0 / 0.00</td><td>1 / 0.11</td></tr></tbody></table>',
+      note: "Semifinal de vuelta del Clausura 2025. América dominaba el territorio (77%) pero sin ocasiones claras, y Cruz Azul anotó con un solo tiro de poco valor." },
+    q: "¿Haces un cambio de inmediato para reaccionar?",
+    opts: [
+      { t: "Sí, cambio inmediato (en los próximos 10 minutos)", v: "sin", why: "Sin respaldo estadístico: con 88 goles en contra analizados, el efecto de cambiar rápido no se distingue de cero." },
+      { t: "No, mantener y esperar", v: "sin", why: "Tampoco tiene respaldo: los datos no muestran que esperar sea mejor ni peor." },
+      { t: "Decidir por razones tácticas concretas (rival, físico, rol del jugador), no por el reloj", v: "ok", why: "Es lo que sí se sostiene: la urgencia por sí sola no aumenta la probabilidad de anotar, así que el cambio debe justificarse por lo que aporta." }
+    ],
+    evidence: function () {
+      var lo = -24.2, hi = 11.6, pt = -5.8, mn = -30, mx = 30;
+      function pos(x) { return ((x - mn) / (mx - mn) * 100).toFixed(2) + "%"; }
+      return '<div class="block"><h3>Efecto de cambiar rápido sobre anotar en 15 min</h3>' +
+        '<div class="cmp"><div class="stat"><span>Comparación ingenua</span><b>−8.6 pp</b></div><div class="stat"><span>Emparejado (situación × minuto)</span><b>−5.8 pp</b></div></div>' +
+        '<div class="ci" role="img" aria-label="Efecto emparejado -5.8 puntos porcentuales, intervalo 95% de -24.2 a 11.6"><div class="axis"></div><div class="zero"></div><div class="range" style="left:' + pos(lo) + ';width:' + ((hi - lo) / (mx - mn) * 100).toFixed(2) + '%"></div><div class="pt" style="left:' + pos(pt) + '"></div>' +
+        '<span class="lbl z" style="left:50%">0</span><span class="lbl" style="left:' + pos(lo) + '">−24.2</span><span class="lbl" style="left:' + pos(hi) + '">+11.6</span></div>' +
+        '<p class="note">Intervalo de confianza al 95% (bootstrap, 2000 remuestreos). Incluye el cero: no hay evidencia de efecto en ningún sentido. Se probaron 5 combinaciones de ventanas y en las cinco el intervalo incluye el cero.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>Tras el gol América hizo dos cambios al minuto 58, empató al 65 y ganó con un gol al 78: cambios en los 10 minutos siguientes y gol antes de 15 minutos. Es un caso a favor, pero es una anécdota: en el mismo tipo de situación (perdiendo, minuto 45-59) los cambios rápidos anotaron 22% frente a 9% sin cambio, y en los estratos de perdiendo en el minuto 15 y 30 la diferencia fue negativa.</p></div>' +
+        '<div class="block"><h3>Límites</h3><p class="note">Pocos eventos (27 con cambio), cambios planificados mezclados con reactivos, sin control por fuerza del rival ni tarjetas.</p></div>';
+    }
+  },
+  {
+    id: "b_corner85", kind: "balon",
+    tag: "Balón parado · patrones de la temporada",
+    title: "Córner a favor, minuto 85",
+    sit: "América pierde por un gol y cobra un córner en el minuto 85. Datos de los tres torneos de Jardine (129 partidos).",
+    stats: [["Córners analizados", "681"], ["Terminan en remate", "42.6%"], ["Tiro libre → remate", "18.7%"], ["Saque de banda → remate", "9.0%"]],
+    statsNote: "El 18.7% del tiro libre incluye reposiciones lejos del área, por eso no es comparable de forma directa con el córner.",
+    ctx: { table: '<table><thead><tr><th>Cuando América pierde por 1 desde el minuto 75</th><th>Dato</th></tr></thead><tbody>' +
+      '<tr><td>Partidos en esa situación</td><td>17 de 129</td></tr><tr><td>Córners cobrados desde el 75\'</td><td>34</td></tr>' +
+      '<tr><td>Córners que terminan en remate</td><td>50.0% (n = 34)</td></tr>' +
+      '<tr><td>Tiros por cada 10 min en el cierre</td><td>2.14</td></tr><tr><td>Tiros por cada 10 min, minutos 60-75 de todos los partidos</td><td>1.55</td></tr></tbody></table>',
+      note: "Al ir perdiendo el equipo sube el ritmo de tiros en el cierre (2.14 contra 1.55 por cada 10 minutos). El 50% de remate en 34 córners es más alto que el 42.6% de toda la temporada, pero con tan pocos casos la diferencia no es concluyente." },
+    q: "¿Cómo cobras el córner?",
+    opts: [
+      { t: "Centro al área, a rematar (envío cerrado hacia el punto penal)", v: "ok", why: "Respaldado: 42.6% de los córners de América terminan en remate, y el envío cerrado al punto penal es el patrón dominante (285 de 452 envíos identificados)." },
+      { t: "Jugada corta para recircular la posesión", v: "sin", why: "El análisis no midió el córner corto, así que no hay datos a favor ni en contra." },
+      { t: "Cobro rápido para sorprender", v: "sin", why: "Tampoco se midió el cobro rápido. No hay evidencia en este análisis." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Lo que muestran los datos</h3>' +
+        '<div class="cmp"><div class="stat"><span>xG en jugadas de córner a favor</span><b>25.79</b></div><div class="stat"><span>xG en contra tras córner</span><b>21.45</b></div></div>' +
+        '<p class="note">Margen +4.34 de xG. Los remates se concentran en el punto penal y el área chica, y los del rival también: el córner es la jugada de balón parado más peligrosa para ambos.</p></div>' +
+        '<div class="block"><h3>Límites</h3><p class="note">Son promedios de tres temporadas, sin condicionar a marcador ni minuto, y un remate no es un gol. No hay un resultado de partido concreto para este escenario; es una decisión que se evalúa con la tasa histórica.</p></div>';
+    }
+  },
+  {
+    id: "e_juarez", kind: "expulsion",
+    tag: "Expulsión · cómo reacciona Jardine",
+    title: "Juárez – América, visitante",
+    sit: "12 de julio de 2025, minuto 66. América gana 1-0 como visitante (gol de Zendejas al 38') y le expulsan a Erick Sánchez. Quedan unos 25 minutos con diez jugadores contra once.",
+    stats: [["Minuto", "66"], ["Marcador", "1 – 0 a favor"], ["Jugadores", "10 contra 11"], ["Tiempo restante", "~25 min"]],
+    statsNote: "",
+    ctx: { table: '<table><thead><tr><th>Del 45 al 66, once contra once</th><th>América</th><th>Juárez</th></tr></thead><tbody>' +
+      '<tr><td>Tiros</td><td>4</td><td>3</td></tr><tr><td>xG de Juárez</td><td></td><td>0.07</td></tr>' +
+      '<tr><td>Posesión</td><td>49%</td><td>51%</td></tr><tr><td>Field tilt</td><td>49%</td><td>51%</td></tr></tbody></table>',
+      note: "América ganaba 1-0 desde el 38' (gol de Zendejas) y el partido estaba parejo antes de la expulsión." },
+    q: "Te quedas con diez y ganas 1-0. ¿Qué haces?",
+    opts: [
+      { t: "Replegarse y cuidar el resultado: línea más baja y juego más directo", v: "ok", why: "Es lo que suele hacer el América de Jardine con un expulsado: en sus expulsiones propias la posesión baja 13.4 puntos, la línea defensiva 10.3 metros y los pases largos suben 26.5 puntos. Ojo: los datos describen qué hace, no prueban que sea lo mejor." },
+      { t: "Seguir presionando alto como si nada hubiera pasado", v: "sin", why: "Los datos no miden esta opción: en los casos analizados Jardine no la eligió, así que no hay comparación posible." },
+      { t: "Meter un delantero para ir por el segundo gol", v: "sin", why: "Tampoco se midió. No hay casos suficientes para saber si ir por el segundo gol con diez funciona mejor o peor." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Cómo cambia América con un expulsado (tres temporadas)</h3>' +
+        '<div class="cmp"><div class="stat"><span>Posesión</span><b>−13.4 pp</b></div><div class="stat"><span>Altura de la línea</span><b>−10.3 m</b></div><div class="stat"><span>Pases largos</span><b>+26.5 pp</b></div></div>' +
+        '<p class="note">Cambio medio tras la expulsión propia. Pocos casos: sirve para describir un patrón, no para probar que sea la mejor respuesta.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>Al descanso el modelo daba 75% de ganar; la expulsión llegó después, algo que el modelo no podía ver. América bajó de 4 tiros a 0 y de 49% a 42% de posesión; Juárez generó 6 tiros (xG 0.42), cambió al 70\' y empató al 79\'; América hizo cambios al 73\', 74\' y 83\'. Terminó 1-1. Es un solo partido: no prueba que otra decisión habría dado otro resultado.</p></div>';
+    }
+  }
+  ,{
+    id: "d_quer", kind: "descanso",
+    tag: "Descanso · modelo predictivo",
+    title: "América – Querétaro, local",
+    sit: "Torneo Apertura 2025, 10 de agosto. Medio tiempo: América gana 1-0 como local. Estas son sus cifras del primer tiempo.",
+    stats: [["Marcador", "1 – 0"], ["xG propio / rival", "1.07 / 0.01"], ["Posesión", "55.1%"], ["PPDA", "1.73"]],
+    statsNote: "PPDA bajo significa presionar mucho: 1.73 es el tercero más bajo de los 38 partidos de 2025/26.",
+    ctx: { table: '<table><thead><tr><th>Primer tiempo</th><th>Este partido</th><th>Media 2025/26</th></tr></thead><tbody>' +
+      '<tr><td>Tiros de América</td><td>7</td><td>6.6</td></tr><tr><td>Tiros del rival</td><td class="lo">2</td><td>5.0</td></tr>' +
+      '<tr><td>Field tilt relativo</td><td>78%</td><td>59%</td></tr><tr><td>xG de América</td><td>1.07</td><td>0.61</td></tr>' +
+      '<tr><td>xG del rival</td><td class="lo">0.01</td><td>0.47</td></tr></tbody></table>',
+      note: "La media es la de los 38 partidos de 2025/26 que el modelo no vio al entrenar. En este primer tiempo América generó mucho más xG que su media (1.07 contra 0.61) y el rival casi no generó." },
+    q: "Es el descanso. ¿Qué haces?",
+    opts: [
+      { t: "Mantener el planteamiento", v: "ok", why: "El modelo estima 2% de derrota. Con un primer tiempo así, los datos no piden un ajuste. Ojo: el modelo dice qué pasa si nada cambia, no que mantener sea lo mejor." },
+      { t: "Ajustar: presionar más arriba y subir el volumen ofensivo", v: "no", why: "El primer tiempo ya fue de mucha presión (PPDA 1.73) y mucho volumen. No hay señal de riesgo que justifique un ajuste." },
+      { t: "Cerrar el partido con un cambio defensivo", v: "no", why: "Con 87% de ganar y casi ningún peligro del rival, replegarse no tiene respaldo en el patrón de datos." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Lo que dice el modelo al descanso</h3>' +
+        '<div class="probbar" role="img" aria-label="Gana 86.6%, empata 11.6%, pierde 1.8%"><div class="pb-g" style="width:86.6%">Gana 86.6%</div><div class="pb-e" style="width:11.6%">12%</div><div class="pb-p" style="width:1.8%"></div></div>' +
+        '<p class="note">Gana 86.6% · Empata 11.6% · Pierde 1.8%. Es un partido verde del semáforo (riesgo de perder menor a 10%). Probado en 38 partidos que no vio, el modelo le da en promedio 43% de probabilidad a lo que ocurre; un modelo que solo repite el historial, 34%.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>América ganó 1-0: el marcador del descanso se mantuvo. El modelo acertó, pero es un solo partido y el modelo reparte probabilidades, no adivina.</p></div>';
+    }
+  }
+  ,{
+    id: "d_atlas", kind: "descanso",
+    tag: "Descanso · modelo predictivo",
+    title: "América – Atlas, local",
+    sit: "Torneo Clausura 2026, 26 de abril. Medio tiempo: 0-0 en casa. Estas son las cifras de América en el primer tiempo.",
+    stats: [["Marcador", "0 – 0"], ["xG propio / rival", "0.88 / 0.11"], ["Posesión", "53.2%"], ["PPDA", "5.59"]],
+    statsNote: "PPDA alto significa presionar poco: 5.59 es de los más altos de la temporada 2025/26 (el 34.º de 38).",
+    ctx: { table: '<table><thead><tr><th>Primer tiempo</th><th>Este partido</th><th>Media 2025/26</th></tr></thead><tbody>' +
+      '<tr><td>Tiros de América</td><td>5</td><td>6.6</td></tr><tr><td>Tiros del rival</td><td class="lo">2</td><td>5.0</td></tr>' +
+      '<tr><td>Field tilt relativo</td><td>62%</td><td>59%</td></tr><tr><td>xG de América</td><td>0.88</td><td>0.61</td></tr>' +
+      '<tr><td>xG del rival</td><td class="lo">0.11</td><td>0.47</td></tr></tbody></table>',
+      note: "La media es la de los 38 partidos de 2025/26 que el modelo no vio al entrenar. América generó más peligro que su media y el rival casi nada, aunque presionó poco." },
+    q: "Es el descanso. ¿Qué haces?",
+    opts: [
+      { t: "Mantener el planteamiento", v: "ok", why: "Es la lectura del modelo: 76% de ganar y 11% de perder, con xG 0.88 contra 0.11. Ojo: el riesgo de perder pasa apenas el 10%, así que el semáforo queda en amarillo, y el modelo no demuestra que mantener sea lo mejor." },
+      { t: "Ajustar: presionar más arriba y subir el volumen ofensivo", v: "no", why: "El modelo no ve un riesgo alto que justifique ajustar. Además, si ganar ya es lo más probable, subir el riesgo de una pérdida de balón no tiene respaldo en los datos." },
+      { t: "Cerrar el partido con un cambio defensivo", v: "no", why: "Con 0.88 de xG propio contra 0.11 del rival, el patrón no sostiene replegarse: el primer tiempo lo dominó América." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Lo que dice el modelo al descanso</h3>' +
+        '<div class="probbar" role="img" aria-label="Gana 76.4%, empata 12.1%, pierde 11.4%"><div class="pb-g" style="width:76.4%">Gana 76.4%</div><div class="pb-e" style="width:12.1%">12%</div><div class="pb-p" style="width:11.4%">11%</div></div>' +
+        '<p class="note">Gana 76.4% · Empata 12.1% · Pierde 11.4%. El semáforo queda en amarillo porque el riesgo de perder supera el 10%, aunque ganar es lo más probable. Probado en 38 partidos que no vio, el modelo le da en promedio 43% de probabilidad a lo que ocurre; un modelo que solo repite el historial, 34%.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>América perdió 0-1. El modelo daba 11% a esa derrota: algo que pasa más o menos una de cada nueve veces con ese riesgo. Es la razón por la que lo juzgamos en muchos partidos y no en uno solo.</p></div>';
+    }
+  }
+  ,{
+    id: "g_pachuca", kind: "gol",
+    tag: "Gol en contra · análisis causal",
+    title: "Pachuca – América",
+    sit: "18 de febrero de 2024, minuto 55. Pachuca anota y América, de visitante, queda perdiendo. Al descanso era 0-0. Aún quedan unos 35 minutos.",
+    stats: [["Minuto", "55"], ["Situación", "Perdiendo"], ["Localía", "Visitante"], ["Tiempo restante", "~35 min"]],
+    statsNote: "",
+    ctx: { table: '<table><thead><tr><th>Hasta el minuto 55</th><th>América</th><th>Pachuca</th></tr></thead><tbody>' +
+      '<tr><td>xG acumulado</td><td>0.18</td><td>0.31</td></tr><tr><td>Tiros</td><td>2</td><td>7</td></tr>' +
+      '<tr><td>Posesión</td><td>52%</td><td>48%</td></tr><tr><td>Field tilt</td><td class="lo">42%</td><td>58%</td></tr>' +
+      '<tr><td>Min. 45-55: tiros / xG</td><td>0 / 0.00</td><td>0 / 0.00</td></tr></tbody></table>',
+      note: "Su field tilt medio es 59%; hasta el gol América jugó mucho menos tiempo en campo rival que de costumbre. El partido estaba parejo y con pocas ocasiones: nadie había tirado desde el inicio del segundo tiempo." },
+    q: "¿Haces un cambio de inmediato para reaccionar?",
+    opts: [
+      { t: "Sí, cambio inmediato (en los próximos 10 minutos)", v: "sin", why: "Sin respaldo estadístico: con 88 goles en contra analizados, el efecto de cambiar rápido no se distingue de cero." },
+      { t: "No, mantener y esperar", v: "sin", why: "Tampoco tiene respaldo: los datos no muestran que esperar sea mejor ni peor." },
+      { t: "Decidir por razones tácticas concretas (rival, físico, rol del jugador), no por el reloj", v: "ok", why: "Es lo que sí se sostiene: la urgencia por sí sola no aumenta la probabilidad de anotar, así que el cambio debe justificarse por lo que aporta." }
+    ],
+    evidence: function () {
+      return causalBlock() +
+        '<div class="block"><h3>Lo que pasó</h3><p>América hizo su primer cambio al 64\' (a los 9 minutos del gol) y empató al 65\', pero Pachuca volvió a anotar al 75\' y terminó ganando 2-1. Es una anécdota: en el mismo tipo de situación (perdiendo, minuto 45-59) los cambios rápidos anotaron 22% (2 de 9) frente a 9% (1 de 11) sin cambio, con muy pocos casos.</p></div>' + causalLimits();
+    }
+  }
+  ,{
+    id: "g_monterrey", kind: "gol",
+    tag: "Gol en contra · análisis causal",
+    title: "América – Monterrey",
+    sit: "13 de diciembre de 2024, minuto 34. Monterrey anota y América, de local, queda perdiendo. Aún quedan unos 55 minutos.",
+    stats: [["Minuto", "34"], ["Situación", "Perdiendo"], ["Localía", "Local"], ["Tiempo restante", "~55 min"]],
+    statsNote: "",
+    ctx: { table: '<table><thead><tr><th>Hasta el minuto 34</th><th>América</th><th>Monterrey</th></tr></thead><tbody>' +
+      '<tr><td>xG acumulado</td><td>0.29</td><td>0.12</td></tr><tr><td>Tiros</td><td>2</td><td>3</td></tr>' +
+      '<tr><td>Posesión</td><td class="lo">42%</td><td>58%</td></tr><tr><td>Field tilt</td><td class="lo">44%</td><td>56%</td></tr>' +
+      '<tr><td>Min. 19-34: tiros / xG</td><td>0 / 0.00</td><td>1 / 0.02</td></tr></tbody></table>',
+      note: "Su posesión media es 51% y su field tilt medio 59%. América tuvo más peligro acumulado (0.29 contra 0.12 de xG), pero con poca posesión y poco territorio, sobre todo en los 15 minutos antes del gol (32% de field tilt)." },
+    q: "¿Haces un cambio de inmediato para reaccionar?",
+    opts: [
+      { t: "Sí, cambio inmediato (en los próximos 10 minutos)", v: "sin", why: "Sin respaldo estadístico: con 88 goles en contra analizados, el efecto de cambiar rápido no se distingue de cero." },
+      { t: "No, mantener y esperar", v: "sin", why: "Tampoco tiene respaldo: los datos no muestran que esperar sea mejor ni peor." },
+      { t: "Decidir por razones tácticas concretas (rival, físico, rol del jugador), no por el reloj", v: "ok", why: "Es lo que sí se sostiene: la urgencia por sí sola no aumenta la probabilidad de anotar, así que el cambio debe justificarse por lo que aporta." }
+    ],
+    evidence: function () {
+      return causalBlock() +
+        '<div class="block"><h3>Lo que pasó</h3><p>América no hizo cambios en los 10 minutos siguientes: el primero llegó al 62\' del segundo tiempo. Empató al 38\' (1-1 al descanso), anotó otra vez al 48\' y terminó ganando 2-1. Es otra anécdota: en el tramo de perdiendo entre el minuto 30 y 44, ninguno de los 5 casos con cambio rápido anotó en 15 minutos, contra 3 de 7 sin cambio. Con tan pocos casos, tampoco prueba que esperar sea mejor.</p></div>' + causalLimits();
+    }
+  }
+  ,{
+    id: "b_corner_rival", kind: "balon",
+    tag: "Balón parado · patrones de la temporada",
+    title: "Córner del rival, minuto 80",
+    sit: "América gana por un gol y el rival cobra un córner en el minuto 80. Datos de los tres torneos de Jardine (129 partidos).",
+    stats: [["Córners del rival", "571"], ["Terminan en remate", "46.8%"], ["Goles tras córner rival", "18"], ["Remates desde el punto penal y el área chica", "62%"]],
+    statsNote: "El córner del rival termina en remate más seguido (46.8%) que el de América (42.6%).",
+    ctx: { table: '<table><thead><tr><th>Córners del rival, según el marcador</th><th>Córners</th><th>Terminan en remate</th></tr></thead><tbody>' +
+      '<tr><td>América gana</td><td>228</td><td>47.8%</td></tr><tr><td>Empate</td><td>271</td><td>44.6%</td></tr>' +
+      '<tr><td>América pierde</td><td>72</td><td>51.4%</td></tr><tr><td>Desde el minuto 75</td><td>139</td><td>49.6%</td></tr></tbody></table>',
+      note: "Son 267 remates del rival tras córner: 47% salen de la zona del punto penal y 16% del área chica. El xG que América concede tras córner es 21.45 en tres torneos." },
+    q: "¿Cómo defiendes el córner?",
+    opts: [
+      { t: "Reforzar el punto penal y el área chica, donde salen 6 de cada 10 remates del rival", v: "ok", why: "Respaldado: el 62% de los remates del rival tras córner salen de esas dos zonas (47% del punto penal y 16% del área chica). Ojo: los datos describen dónde remata el rival, no miden qué sistema de marca funciona mejor." },
+      { t: "Dejar dos jugadores arriba para salir al contragolpe", v: "sin", why: "No se midió: el análisis no registra cuántos jugadores deja América arriba ni qué pasa después del córner." },
+      { t: "Cambiar a marca al hombre en vez de zona", v: "sin", why: "Tampoco se midió el sistema de marca. No hay evidencia a favor ni en contra en este análisis." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Lo que muestran los datos</h3>' +
+        '<div class="cmp"><div class="stat"><span>Goles recibidos tras córner</span><b>18</b></div><div class="stat"><span>Goles de América tras córner</span><b>22</b></div></div>' +
+        '<p class="note">El rival remata tras córner en 46.8% de los casos y América en 42.6%; en xG, 21.45 contra 25.79 a favor de América. El córner es la jugada de balón parado más peligrosa para ambos.</p></div>' +
+        '<div class="block"><h3>Límites</h3><p class="note">Son promedios de tres temporadas y un remate no es un gol. No hay un partido concreto para este escenario: se evalúa con la tasa histórica.</p></div>';
+    }
+  }
+  ,{
+    id: "b_corner_tecnica", kind: "balon",
+    tag: "Balón parado · patrones de la temporada",
+    title: "Córner a favor, minuto 25, 0-0",
+    sit: "América y el rival empatan 0-0 y América cobra un córner en el minuto 25. Datos de los tres torneos de Jardine (129 partidos).",
+    stats: [["Córners analizados", "681"], ["Terminan en remate", "42.6%"], ["Con el marcador empatado", "38.7%"], ["En los primeros 30 minutos", "41.1%"]],
+    statsNote: "Con ventaja o en contra, América remata más tras córner: 46.3% y 46.9%, contra 38.7% si el marcador está empatado.",
+    ctx: { table: '<table><thead><tr><th>Técnica del envío</th><th>Córners</th><th>Terminan en remate</th><th>xG por córner</th></tr></thead><tbody>' +
+      '<tr><td>Cerrado (inswinger)</td><td>285</td><td>40.0%</td><td>0.037</td></tr><tr><td>Abierto (outswinger)</td><td>154</td><td>48.1%</td><td>0.041</td></tr></tbody></table>',
+      note: "Hay otros 229 córners sin técnica registrada y 13 rectos. El cerrado es el patrón dominante (285 de 452 envíos identificados)." },
+    q: "¿Cómo botas el córner?",
+    opts: [
+      { t: "Envío cerrado hacia el punto penal, como lo hace más seguido", v: "ok", why: "Respaldado: es el patrón dominante de América y 40.0% de esos córners terminan en remate, con 0.037 de xG por córner." },
+      { t: "Envío abierto, que se aleja de la portería", v: "ok", why: "También respaldado: 48.1% de esos córners terminan en remate y 0.041 de xG por córner. Con 154 casos la diferencia con el cerrado (8 puntos de remate, poca diferencia de xG) no es concluyente." },
+      { t: "Jugada corta para recircular la posesión", v: "sin", why: "El análisis no midió el córner corto, así que no hay datos a favor ni en contra." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Lo que muestran los datos</h3>' +
+        '<div class="cmp"><div class="stat"><span>Remate por córner, cerrado</span><b>40.0%</b></div><div class="stat"><span>Remate por córner, abierto</span><b>48.1%</b></div></div>' +
+        '<p class="note">En xG por córner la diferencia es pequeña (0.037 contra 0.041). Aquí no hay una sola forma de cobrar bien: los dos envíos tienen respaldo y los datos no alcanzan para decidir entre ellos.</p></div>' +
+        '<div class="block"><h3>Límites</h3><p class="note">Son promedios de tres temporadas, sin separar rival ni jugador que cobra, y un remate no es un gol. No hay un resultado de partido concreto para este escenario.</p></div>';
+    }
+  }
+  ,{
+    id: "e_sanluis", kind: "expulsion",
+    tag: "Expulsión · cómo reacciona Jardine",
+    title: "América – Atlético San Luis, local",
+    sit: "15 de enero de 2026, minuto 19. América y San Luis empatan 0-0 y le expulsan a un jugador a América. Quedan unos 70 minutos con diez jugadores contra once.",
+    stats: [["Minuto", "19"], ["Marcador", "0 – 0"], ["Jugadores", "10 contra 11"], ["Tiempo restante", "~70 min"]],
+    statsNote: "Es una expulsión temprana: solo 2 de las 9 expulsiones propias de América en tres temporadas llegaron antes del minuto 60.",
+    ctx: { table: '<table><thead><tr><th>Hasta el minuto 19</th><th>América</th><th>San Luis</th></tr></thead><tbody>' +
+      '<tr><td>Tiros</td><td>2</td><td>2</td></tr><tr><td>xG acumulado</td><td>0.10</td><td>0.06</td></tr>' +
+      '<tr><td>Posesión</td><td>61%</td><td>39%</td></tr><tr><td>Field tilt</td><td>58%</td><td>42%</td></tr>' +
+      '<tr><td>Pases</td><td>167</td><td>102</td></tr></tbody></table>',
+      note: "Antes de la expulsión América tenía el balón y el partido estaba parejo: pocos tiros de ambos lados. Su field tilt medio en los 129 partidos es 59%." },
+    q: "Te quedas con diez en el minuto 19 con 0-0. ¿Qué haces?",
+    opts: [
+      { t: "Replegarse y cuidar el resultado: línea más baja y juego más directo", v: "ok", why: "Es lo que suele hacer el América de Jardine con un expulsado: en sus expulsiones propias la posesión baja 13.4 puntos, la línea defensiva 10.3 metros y los pases largos suben 26.5 puntos. Ojo: los datos describen qué hace, no prueban que sea lo mejor, y con una expulsión tan temprana casi no hay casos comparables." },
+      { t: "Seguir presionando alto como si nada hubiera pasado", v: "sin", why: "Los datos no miden esta opción: en los casos analizados Jardine no la eligió, así que no hay comparación posible." },
+      { t: "Meter un delantero para ir por el gol", v: "sin", why: "Tampoco se midió. No hay casos suficientes para saber si ir por el gol con diez funciona mejor o peor." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Cómo cambia América con un expulsado (tres temporadas)</h3>' +
+        '<div class="cmp"><div class="stat"><span>Posesión</span><b>−13.4 pp</b></div><div class="stat"><span>Altura de la línea</span><b>−10.3 m</b></div><div class="stat"><span>Pases largos</span><b>+26.5 pp</b></div></div>' +
+        '<p class="note">Cambio medio tras la expulsión propia, con 9 casos. Sirve para describir un patrón, no para probar que sea la mejor respuesta.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>América perdió 0-2 en casa. Es un solo partido: no prueba que otra decisión habría dado otro resultado. La otra expulsión propia tan temprana, en el minuto 10 contra Necaxa en enero de 2024, terminó 0-0, con una expulsión también para el rival a los 21 minutos.</p></div>';
+    }
+  }
+  ,{
+    id: "e_santos", kind: "expulsion",
+    tag: "Expulsión · cómo reacciona Jardine",
+    title: "América – Santos Laguna, local",
+    sit: "20 de octubre de 2024, minuto 57. América y Santos Laguna empatan 0-0 y le expulsan a un jugador a Santos. Quedan unos 35 minutos con once jugadores contra diez.",
+    stats: [["Minuto", "57"], ["Marcador", "0 – 0"], ["Jugadores", "11 contra 10"], ["Tiempo restante", "~35 min"]],
+    statsNote: "Las expulsiones a favor son más frecuentes: América tuvo 27 en tres temporadas, contra 9 expulsiones propias.",
+    ctx: { table: '<table><thead><tr><th>Hasta el minuto 57</th><th>América</th><th>Santos</th></tr></thead><tbody>' +
+      '<tr><td>Tiros</td><td>10</td><td>6</td></tr><tr><td>xG acumulado</td><td>0.80</td><td>0.16</td></tr>' +
+      '<tr><td>Posesión</td><td>70%</td><td>30%</td></tr><tr><td>Field tilt</td><td>88%</td><td>12%</td></tr>' +
+      '<tr><td>Min. 42-57: tiros / xG</td><td>3 / 0.11</td><td>0 / 0.00</td></tr></tbody></table>',
+      note: "América dominaba el partido (70% de posesión, 88% de field tilt) pero con poco peligro por tiro: 0.80 de xG con 10 tiros. Su field tilt medio es 59%." },
+    q: "El rival se queda con diez y siguen 0-0. ¿Qué haces?",
+    opts: [
+      { t: "Controlar el balón y subir la línea para ir sobre el área rival", v: "ok", why: "Es lo que suele hacer el América de Jardine con un jugador de más: en sus 27 casos la posesión sube 12.8 puntos y la línea defensiva sube 11.9 metros. Ojo: los datos describen qué hace, no prueban que sea lo mejor." },
+      { t: "Acelerar al máximo: presionar con todos para sentenciar pronto", v: "sin", why: "Los datos no miden esta opción: en los casos analizados Jardine controló la posesión, no aceleró. La tasa de tiros apenas sube (+0.2 por 10 minutos)." },
+      { t: "Cuidar el empate: mantener el bloque medio como antes", v: "sin", why: "Tampoco se midió. No hay casos suficientes para saber si ignorar la superioridad numérica funciona mejor o peor." }
+    ],
+    evidence: function () {
+      return '<div class="block"><h3>Cómo cambia América con un jugador de más (tres temporadas)</h3>' +
+        '<div class="cmp"><div class="stat"><span>Posesión</span><b>+12.8 pp</b></div><div class="stat"><span>Altura de la línea</span><b>+11.9 m</b></div><div class="stat"><span>Tiros</span><b>+0.2 por 10 min</b></div></div>' +
+        '<p class="note">Cambio medio tras la expulsión al rival, con 27 casos. La posesión y la línea suben mucho; la tasa de tiros casi no cambia.</p></div>' +
+        '<div class="block"><h3>Lo que pasó</h3><p>América ganó 3-0: los tres goles llegaron después de la expulsión. Es un solo partido: no prueba que controlar el balón sea mejor que otra opción.</p></div>';
+    }
+  }
+];
+
+function causalBlock() {
+  var lo = -24.2, hi = 11.6, pt = -5.8, mn = -30, mx = 30;
+  function pos(x) { return ((x - mn) / (mx - mn) * 100).toFixed(2) + "%"; }
+  return '<div class="block"><h3>Efecto de cambiar rápido sobre anotar en 15 min</h3>' +
+    '<div class="cmp"><div class="stat"><span>Comparación ingenua</span><b>−8.6 pp</b></div><div class="stat"><span>Emparejado (situación × minuto)</span><b>−5.8 pp</b></div></div>' +
+    '<div class="ci" role="img" aria-label="Efecto emparejado -5.8 puntos porcentuales, intervalo 95% de -24.2 a 11.6"><div class="axis"></div><div class="zero"></div><div class="range" style="left:' + pos(lo) + ';width:' + ((hi - lo) / (mx - mn) * 100).toFixed(2) + '%"></div><div class="pt" style="left:' + pos(pt) + '"></div>' +
+    '<span class="lbl z" style="left:50%">0</span><span class="lbl" style="left:' + pos(lo) + '">−24.2</span><span class="lbl" style="left:' + pos(hi) + '">+11.6</span></div>' +
+    '<p class="note">Intervalo de confianza al 95% (bootstrap, 2000 remuestreos). Incluye el cero: no hay evidencia de efecto en ningún sentido. Se probaron 5 combinaciones de ventanas y en las cinco el intervalo incluye el cero.</p></div>';
+}
+function causalLimits() {
+  return '<div class="block"><h3>Límites</h3><p class="note">Pocos eventos (27 con cambio), cambios planificados mezclados con reactivos, sin control por fuerza del rival ni tarjetas.</p></div>';
+}
+
+/* Cada vez que se pulsa Comenzar se sortea un escenario de cada tipo del banco (12 en total) */
+var KINDS = ["descanso", "gol", "balon", "expulsion"], DRILLS = [], lastPick = {};
+function pickRun() {
+  DRILLS = KINDS.map(function (k) {
+    var pool = BANK.filter(function (d) { return d.kind === k; });
+    var fresh = pool.filter(function (d) { return d.id !== lastPick[k]; });
+    var d = (fresh.length ? fresh : pool)[Math.floor(Math.random() * (fresh.length ? fresh.length : pool.length))];
+    lastPick[k] = d.id; return d;
+  });
+}
+pickRun();
+
+var state = { i: -1, answers: [], t0: 0, tick: null, elapsed: 0, locked: false };
+var app = document.getElementById("drills-app");
+
+function fmt(s) { var m = Math.floor(s / 60), r = s % 60; return m + ":" + (r < 10 ? "0" : "") + r; }
+function steps() {
+  var h = '<div class="steps" aria-hidden="true">';
+  for (var k = 0; k < DRILLS.length; k++) h += '<i class="' + (k < state.answers.length ? "done" : (k === state.i ? "now" : "")) + '"></i>';
+  return h + "</div>";
+}
+function timerHtml() {
+  var over = state.elapsed > LIMIT;
+  return '<div class="timer' + (over ? " over" : "") + '" id="timer"><b>' + fmt(state.elapsed) + '</b><span>de ' + fmt(LIMIT) + ' sugeridos</span></div>';
+}
+function startTimer() {
+  state.t0 = Date.now() - state.elapsed * 1000;
+  clearInterval(state.tick);
+  state.tick = setInterval(function () {
+    state.elapsed = Math.floor((Date.now() - state.t0) / 1000);
+    var el = document.getElementById("timer");
+    if (el) { el.outerHTML = timerHtml(); }
+  }, 250);
+}
+function stopTimer() { clearInterval(state.tick); }
+
+function renderIntro() {
+  app.innerHTML =
+    '<div class="card"><p class="situation">Cada decisión usa datos reales de André Jardine en América. Cada vez que pulsas Comenzar se sortean cuatro de 12 escenarios reales.</p>' +
+    '<ul class="list"><li><b>Descanso:</b> qué dice el modelo predictivo.</li><li><b>Gol en contra:</b> qué dice el análisis causal.</li><li><b>Balón parado:</b> qué dicen los patrones de córner.</li><li><b>Expulsión:</b> cómo reacciona Jardine cuando se queda con diez o cuando el rival se queda con diez.</li></ul>' +
+    '<p class="note">Meta: terminar las cuatro en 240 segundos. Puedes responder con las teclas 1, 2 y 3. El cronómetro empieza al pulsar Comenzar.</p>' +
+    '<button class="btn" id="go">Comenzar</button></div>' +
+    '';
+  document.getElementById("go").onclick = function () { pickRun(); state.i = 0; state.answers = []; state.elapsed = 0; startTimer(); renderDrill(); };
+}
+
+function renderDrill() {
+  var d = DRILLS[state.i];
+  var h = '<div class="dtop"><div><p class="eyebrow">Decisión ' + (state.i + 1) + ' de ' + DRILLS.length + ' · ' + d.tag + '</p><h2>' + d.title + '</h2></div>' + timerHtml() + '</div>' + steps();
+  h += '<div class="card"><p class="situation">' + d.sit + '</p><div class="stats">';
+  d.stats.forEach(function (s) { h += '<div class="stat"><span>' + s[0] + '</span><b>' + s[1] + '</b></div>'; });
+  h += '</div>' + (d.statsNote ? '<p class="note">' + d.statsNote + '</p>' : '') + (d.ctx ? '<div class="ctx"><h3>Contexto y momentum</h3><div class="tw">' + d.ctx.table + '</div><p class="note">' + d.ctx.note + '</p></div>' : '') + '<p class="question">' + d.q + '</p><div class="opts" id="opts">';
+  d.opts.forEach(function (o, k) { h += '<button class="opt" data-k="' + k + '"><kbd>' + (k + 1) + '</kbd><span>' + o.t + '</span></button>'; });
+  h += '</div><div class="reveal" id="reveal" hidden></div></div>';
+  app.innerHTML = h;
+  state.locked = false;
+  document.querySelectorAll(".opt").forEach(function (b) { b.onclick = function () { choose(+b.dataset.k); }; });
+}
+
+function choose(k) {
+  if (state.locked) return;
+  state.locked = true;
+  var d = DRILLS[state.i], o = d.opts[k];
+  state.answers.push({ i: state.i, k: k, v: o.v });
+  document.querySelectorAll(".opt").forEach(function (b) { b.disabled = true; if (+b.dataset.k === k) b.classList.add("picked"); });
+  var label = { ok: "Respaldada por los datos", sin: "Sin respaldo en los datos", no: "Los datos no la respaldan" }[o.v];
+  var last = state.i === DRILLS.length - 1;
+  var r = document.getElementById("reveal");
+  r.innerHTML = '<span class="verdict ' + o.v + '">' + label + '</span><p>' + o.why + '</p>' + d.evidence() +
+    '<button class="btn" id="next">' + (last ? "Ver resultado" : "Siguiente decisión") + '</button>';
+  r.hidden = false;
+  document.getElementById("next").onclick = function () { if (last) { stopTimer(); renderEnd(); } else { state.i++; renderDrill(); app.scrollIntoView({ block: 'start' }); } };
+  document.getElementById("next").focus({ preventScroll: true });
+  r.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function renderEnd() {
+  var ok = state.answers.filter(function (a) { return a.v === "ok"; }).length;
+  var sin = state.answers.filter(function (a) { return a.v === "sin"; }).length;
+  var inTime = state.elapsed <= LIMIT;
+  app.innerHTML =
+    '<div class="dtop"><div><p class="eyebrow">Resultado</p><h2>Tus cuatro decisiones</h2></div></div>' +
+    '<div class="card"><div class="sum-grid"><div class="stat"><span>Respaldadas por datos</span><b>' + ok + ' de ' + DRILLS.length + '</b></div>' +
+    '<div class="stat"><span>Sin respaldo disponible</span><b>' + sin + '</b></div>' +
+    '<div class="stat"><span>Tiempo</span><b>' + fmt(state.elapsed) + (inTime ? '' : ' (pasó de ' + fmt(LIMIT) + ')') + '</b></div></div>' +
+    '<div class="block"><h3>Qué muestra esta herramienta</h3><ul class="list">' +
+    '<li>El modelo al descanso sí ordena los partidos por riesgo, pero no prueba que un ajuste funcione.</li>' +
+    '<li>Reaccionar rápido a un gol en contra no tiene efecto demostrable sobre anotar pronto: es un resultado nulo, reportado con su incertidumbre.</li>' +
+    '<li>El córner es el balón parado más productivo de América, también para el rival.</li><li>Con diez jugadores, América se repliega y con un jugador más controla el balón: los datos describen el patrón, no prueban que sea lo mejor.</li></ul></div>' +
+    '<div class="block"><h3>Qué no puede decirte</h3><p class="note">Un partido no valida una regla. Los análisis usan 129 partidos de un solo entrenador, y el modelo se probó con 38. Úsalo para ordenar la discusión del cuerpo técnico, no para reemplazarla.</p></div>' +
+    '<button class="btn ghost" id="again">Repetir con otros escenarios</button></div>';
+  document.getElementById("again").onclick = function () { pickRun(); state.i = 0; state.answers = []; state.elapsed = 0; startTimer(); renderDrill(); app.scrollIntoView({ block: 'start' }); };
+}
+
+document.addEventListener("keydown", function (e) {
+  if (state.i < 0 || state.locked) return;
+  var rc = app.getBoundingClientRect(); if (rc.bottom < 0 || rc.top > window.innerHeight) return;
+  var n = parseInt(e.key, 10);
+  if (n >= 1 && n <= 3 && document.getElementById("opts")) choose(n - 1);
+});
+renderIntro();
+
+})();
+
+/* recorrido por torneo */
+(function () {
+  var REC = [{"entrenador": "André Jardine", "equipo": "América", "torneo": "Apertura 2023", "partidos_regulares": 17, "liguilla": [{"rival": "León", "etapa": "Cuartos", "gf": 4, "gc": 2, "partidos": 2, "fecha": "2023-11-30"}, {"rival": "Atlético San Luis", "etapa": "Semifinal", "gf": 5, "gc": 2, "partidos": 2, "fecha": "2023-12-07"}, {"rival": "Tigres UANL", "etapa": "Final", "gf": 4, "gc": 1, "partidos": 2, "fecha": "2023-12-15"}], "resultado": "Campeón", "nivel": 5, "en_curso": false}, {"entrenador": "André Jardine", "equipo": "América", "torneo": "Clausura 2024", "partidos_regulares": 17, "liguilla": [{"rival": "Pachuca", "etapa": "Cuartos", "gf": 2, "gc": 2, "partidos": 2, "fecha": "2024-05-09"}, {"rival": "Guadalajara", "etapa": "Semifinal", "gf": 1, "gc": 0, "partidos": 2, "fecha": "2024-05-16"}, {"rival": "Cruz Azul", "etapa": "Final", "gf": 2, "gc": 1, "partidos": 2, "fecha": "2024-05-24"}], "resultado": "Campeón", "nivel": 5, "en_curso": false}, {"entrenador": "André Jardine", "equipo": "América", "torneo": "Apertura 2024", "partidos_regulares": 17, "liguilla": [{"rival": "Tijuana", "etapa": "Repechaje", "gf": 2, "gc": 2, "partidos": 1, "fecha": "2024-11-22"}, {"rival": "Toluca", "etapa": "Cuartos", "gf": 4, "gc": 0, "partidos": 2, "fecha": "2024-11-28"}, {"rival": "Cruz Azul", "etapa": "Semifinal", "gf": 4, "gc": 3, "partidos": 2, "fecha": "2024-12-06"}, {"rival": "Monterrey", "etapa": "Final", "gf": 3, "gc": 2, "partidos": 2, "fecha": "2024-12-13"}], "resultado": "Campeón", "nivel": 5, "en_curso": false}, {"entrenador": "André Jardine", "equipo": "América", "torneo": "Clausura 2025", "partidos_regulares": 15, "liguilla": [{"rival": "Pachuca", "etapa": "Cuartos", "gf": 2, "gc": 0, "partidos": 2, "fecha": "2025-05-08"}, {"rival": "Cruz Azul", "etapa": "Semifinal", "gf": 2, "gc": 2, "partidos": 2, "fecha": "2025-05-16"}, {"rival": "Toluca", "etapa": "Final", "gf": 0, "gc": 2, "partidos": 2, "fecha": "2025-05-23"}], "resultado": "Subcampeón", "nivel": 4, "en_curso": false}, {"entrenador": "André Jardine", "equipo": "América", "torneo": "Apertura 2025", "partidos_regulares": 17, "liguilla": [{"rival": "Monterrey", "etapa": "Cuartos", "gf": 2, "gc": 3, "partidos": 2, "fecha": "2025-11-27"}], "resultado": "Eliminado en cuartos de final", "nivel": 2, "en_curso": false}, {"entrenador": "André Jardine", "equipo": "América", "torneo": "Clausura 2026", "partidos_regulares": 17, "liguilla": [{"rival": "Pumas UNAM", "etapa": "Cuartos", "gf": 6, "gc": 6, "partidos": 2, "fecha": "2026-05-03"}], "resultado": "Eliminado en cuartos de final", "nivel": 2, "en_curso": false}, {"entrenador": "Jorge Almada", "equipo": "Pachuca", "torneo": "Clausura 2022", "partidos_regulares": 17, "liguilla": [{"rival": "Atlético San Luis", "etapa": "Cuartos", "gf": 5, "gc": 4, "partidos": 2, "fecha": "2022-05-12"}, {"rival": "América", "etapa": "Semifinal", "gf": 4, "gc": 1, "partidos": 2, "fecha": "2022-05-20"}, {"rival": "Atlas", "etapa": "Final", "gf": 2, "gc": 3, "partidos": 2, "fecha": "2022-05-27"}], "resultado": "Subcampeón", "nivel": 4, "en_curso": false}, {"entrenador": "Jorge Almada", "equipo": "Pachuca", "torneo": "Apertura 2022", "partidos_regulares": 17, "liguilla": [{"rival": "Tigres UANL", "etapa": "Cuartos", "gf": 2, "gc": 2, "partidos": 2, "fecha": "2022-10-14"}, {"rival": "Monterrey", "etapa": "Semifinal", "gf": 6, "gc": 2, "partidos": 2, "fecha": "2022-10-21"}, {"rival": "Toluca", "etapa": "Final", "gf": 8, "gc": 2, "partidos": 2, "fecha": "2022-10-28"}], "resultado": "Campeón", "nivel": 5, "en_curso": false}, {"entrenador": "Jorge Almada", "equipo": "Pachuca", "torneo": "Clausura 2023", "partidos_regulares": 17, "liguilla": [{"rival": "Santos Laguna", "etapa": "Repechaje", "gf": 4, "gc": 4, "partidos": 1, "fecha": "2023-05-07"}], "resultado": "Eliminado en repechaje", "nivel": 1, "en_curso": false}, {"entrenador": "Jorge Almada", "equipo": "Pachuca", "torneo": "Apertura 2023", "partidos_regulares": 17, "liguilla": [], "resultado": "No clasificó a liguilla", "nivel": 0, "en_curso": false}, {"entrenador": "Jorge Almada", "equipo": "Pachuca", "torneo": "Clausura 2024", "partidos_regulares": 17, "liguilla": [{"rival": "Pumas UNAM", "etapa": "Repechaje", "gf": 0, "gc": 0, "partidos": 1, "fecha": "2024-05-03"}, {"rival": "Necaxa", "etapa": "Repechaje", "gf": 2, "gc": 1, "partidos": 1, "fecha": "2024-05-06"}, {"rival": "América", "etapa": "Cuartos", "gf": 2, "gc": 2, "partidos": 2, "fecha": "2024-05-09"}], "resultado": "Eliminado en cuartos de final", "nivel": 2, "en_curso": false}, {"entrenador": "Jorge Almada", "equipo": "Pachuca", "torneo": "Apertura 2024", "partidos_regulares": 17, "liguilla": [], "resultado": "No clasificó a liguilla", "nivel": 0, "en_curso": false}, {"entrenador": "Jorge Almada", "equipo": "Pachuca", "torneo": "Clausura 2025", "partidos_regulares": 17, "liguilla": [{"rival": "Monterrey", "etapa": "Repechaje", "gf": 2, "gc": 1, "partidos": 1, "fecha": "2025-04-28"}, {"rival": "América", "etapa": "Cuartos", "gf": 0, "gc": 2, "partidos": 2, "fecha": "2025-05-08"}], "resultado": "Eliminado en cuartos de final", "nivel": 2, "en_curso": false}, {"entrenador": "Diego Cocca", "equipo": "Atlas", "torneo": "Apertura 2021", "partidos_regulares": 17, "liguilla": [{"rival": "Monterrey", "etapa": "Cuartos", "gf": 1, "gc": 1, "partidos": 2, "fecha": "2021-11-25"}, {"rival": "Pumas UNAM", "etapa": "Semifinal", "gf": 1, "gc": 1, "partidos": 2, "fecha": "2021-12-03"}, {"rival": "León", "etapa": "Final", "gf": 3, "gc": 3, "partidos": 2, "fecha": "2021-12-10"}], "resultado": "Campeón (global 3-3, penales)", "nivel": 5, "en_curso": false}, {"entrenador": "Diego Cocca", "equipo": "Atlas", "torneo": "Clausura 2022", "partidos_regulares": 17, "liguilla": [{"rival": "Guadalajara", "etapa": "Cuartos", "gf": 3, "gc": 2, "partidos": 2, "fecha": "2022-05-13"}, {"rival": "Tigres UANL", "etapa": "Semifinal", "gf": 5, "gc": 4, "partidos": 2, "fecha": "2022-05-19"}, {"rival": "Pachuca", "etapa": "Final", "gf": 3, "gc": 2, "partidos": 2, "fecha": "2022-05-27"}], "resultado": "Campeón", "nivel": 5, "en_curso": false}, {"entrenador": "Diego Cocca", "equipo": "Atlas", "torneo": "Apertura 2022", "partidos_regulares": 17, "liguilla": [], "resultado": "No clasificó a liguilla", "nivel": 0, "en_curso": false}, {"entrenador": "Diego Cocca", "equipo": "Atlas", "torneo": "Apertura 2025", "partidos_regulares": 13, "liguilla": [], "resultado": "No clasificó a liguilla", "nivel": 0, "en_curso": false}, {"entrenador": "Diego Cocca", "equipo": "Atlas", "torneo": "Clausura 2026", "partidos_regulares": 17, "liguilla": [{"rival": "Cruz Azul", "etapa": "Cuartos", "gf": 2, "gc": 4, "partidos": 2, "fecha": "2026-05-03"}], "resultado": "Eliminado en cuartos de final", "nivel": 2, "en_curso": false}, {"entrenador": "Diego Cocca", "equipo": "Atlas", "torneo": "Apertura 2026", "partidos_regulares": 1, "liguilla": [], "resultado": "En curso", "nivel": 0, "en_curso": true}, {"entrenador": "Antonio Mohamed", "equipo": "Toluca", "torneo": "Clausura 2025", "partidos_regulares": 17, "liguilla": [{"rival": "Monterrey", "etapa": "Cuartos", "gf": 4, "gc": 4, "partidos": 2, "fecha": "2025-05-08"}, {"rival": "Tigres UANL", "etapa": "Semifinal", "gf": 4, "gc": 1, "partidos": 2, "fecha": "2025-05-15"}, {"rival": "América", "etapa": "Final", "gf": 2, "gc": 0, "partidos": 2, "fecha": "2025-05-23"}], "resultado": "Campeón", "nivel": 5, "en_curso": false}, {"entrenador": "Antonio Mohamed", "equipo": "Toluca", "torneo": "Apertura 2025", "partidos_regulares": 17, "liguilla": [{"rival": "Juárez", "etapa": "Cuartos", "gf": 2, "gc": 1, "partidos": 2, "fecha": "2025-11-27"}, {"rival": "Monterrey", "etapa": "Semifinal", "gf": 3, "gc": 3, "partidos": 2, "fecha": "2025-12-04"}, {"rival": "Tigres UANL", "etapa": "Final", "gf": 2, "gc": 2, "partidos": 2, "fecha": "2025-12-12"}], "resultado": "Campeón (global 2-2, penales)", "nivel": 5, "en_curso": false}, {"entrenador": "Antonio Mohamed", "equipo": "Toluca", "torneo": "Clausura 2026", "partidos_regulares": 17, "liguilla": [{"rival": "Pachuca", "etapa": "Cuartos", "gf": 0, "gc": 3, "partidos": 2, "fecha": "2026-05-04"}], "resultado": "Eliminado en cuartos de final", "nivel": 2, "en_curso": false}, {"entrenador": "Antonio Mohamed", "equipo": "Toluca", "torneo": "Apertura 2026", "partidos_regulares": 12, "liguilla": [], "resultado": "En curso", "nivel": 0, "en_curso": true}];
+  var box = document.getElementById("recorrido"); if (!box) return;
+  var short = { "Atlético San Luis": "San Luis", "Tigres UANL": "Tigres", "Pumas UNAM": "Pumas", "Santos Laguna": "Santos" };
+  var etq = { Repechaje: "Repechaje", Cuartos: "Cuartos", Semifinal: "Semifinal", Final: "Final" };
+  var teams = [], by = {};
+  REC.forEach(function (r) { if (r.en_curso || r.partidos_regulares < 15) return; if (!by[r.equipo]) { by[r.equipo] = []; teams.push(r.equipo); } by[r.equipo].push(r); });
+  box.innerHTML = teams.map(function (e) {
+    var rs = by[e];
+    var t = rs[0].entrenador;
+    var cells = rs.map(function (r) {
+      var cls = r.en_curso ? "cur" : (r.nivel === 5 ? "n5" : r.nivel === 4 ? "n4" : r.nivel === 0 ? "n0" : "");
+      var main = r.en_curso ? "En curso" : r.nivel === 5 ? "Campeón" : r.nivel === 4 ? "Subcampeón" : r.nivel === 0 ? "No clasificó" : "Cae en " + r.liguilla[r.liguilla.length - 1].etapa.toLowerCase();
+      var u = r.liguilla[r.liguilla.length - 1];
+      var det = r.en_curso ? r.partidos_regulares + (r.partidos_regulares === 1 ? " partido jugado" : " partidos jugados") : u ? ((r.nivel >= 4 ? "vs " : "ante ") + (short[u.rival] || u.rival) + " " + u.gf + "-" + u.gc + (r.resultado.indexOf("penales") > -1 ? " (pen.)" : "")) : "";
+      if (r.partidos_regulares < 17) det += (det ? " · " : "") + r.partidos_regulares + " de 17 partidos regulares";
+      return '<div class="rec-c ' + cls + '"><span>' + r.torneo + '</span><b>' + main + '</b><small>' + det + '</small></div>';
+    }).join("");
+    return '<div class="rec-team"><h4>' + e + '<small>' + t + '</small></h4><div class="rec-grid">' + cells + '</div></div>';
+  }).join('<div style="height:14px"></div>');
+})();
+
+/* mapas en cancha */
+(function () {
+  var MP = [{"equipo": "América", "entrenador": "André Jardine", "pres": [[0.891, 0.729, 0.628, 0.357, 0.287, 0.535, 0.62, 0.628], [1.295, 1.24, 1.372, 1.171, 1.039, 1.194, 1.147, 1.116], [1.729, 1.984, 2.217, 1.69, 1.589, 1.946, 1.372, 1.628], [2.465, 2.419, 2.357, 2.023, 1.992, 1.891, 2.054, 2.101], [2.744, 2.178, 2.163, 1.457, 1.535, 2.031, 1.984, 1.845], [2.504, 2.349, 2.202, 1.853, 1.822, 2.109, 1.93, 2.395], [2.372, 2.271, 2.147, 1.891, 1.744, 2.031, 2.132, 2.256], [2.248, 1.837, 1.76, 1.558, 1.38, 1.798, 1.845, 2.078], [1.705, 1.907, 1.558, 1.442, 1.55, 1.55, 1.767, 1.659], [1.031, 1.217, 1.488, 1.481, 1.512, 1.651, 1.163, 1.264], [0.651, 0.705, 1.093, 1.884, 1.845, 1.016, 0.822, 0.845], [0.38, 0.326, 0.535, 0.457, 0.45, 0.45, 0.403, 0.349]], "eq": [[4.054, 4.419, 7.969, 27.233, 29.411, 7.62, 4.054, 3.736], [7.767, 9.38, 14.434, 17.643, 21.519, 12.078, 8.597, 7.512], [13.155, 18.736, 24.132, 15.597, 14.45, 21.217, 14.473, 11.814], [22.124, 25.248, 28.457, 21.457, 20.829, 24.426, 19.899, 17.0], [26.287, 28.209, 31.426, 25.953, 21.922, 26.233, 21.984, 19.194], [28.364, 30.163, 31.558, 26.597, 26.419, 27.496, 24.093, 23.55], [29.853, 30.039, 28.651, 22.915, 24.566, 23.922, 24.457, 25.729], [33.225, 28.721, 25.721, 17.302, 15.558, 21.845, 23.992, 27.977], [35.628, 27.698, 22.837, 16.31, 15.256, 20.574, 23.0, 31.132], [28.744, 21.085, 19.721, 13.822, 12.302, 17.225, 17.566, 24.984], [15.062, 10.791, 12.388, 11.326, 11.736, 9.969, 9.853, 14.093], [9.783, 6.535, 7.419, 7.132, 7.302, 6.07, 4.922, 8.178]], "rv": [[7.868, 4.55, 4.186, 5.357, 5.442, 3.667, 3.969, 6.698], [10.767, 7.388, 8.225, 9.186, 9.054, 6.822, 6.326, 8.814], [18.085, 12.566, 12.682, 9.233, 9.047, 11.891, 10.86, 14.721], [25.512, 18.589, 16.853, 13.217, 13.403, 16.054, 15.442, 22.488], [25.752, 21.566, 20.14, 14.667, 13.651, 18.512, 19.333, 23.767], [26.953, 23.318, 24.364, 21.566, 20.217, 24.341, 22.093, 25.31], [24.558, 24.574, 24.628, 24.473, 26.434, 24.481, 22.023, 22.636], [23.078, 22.543, 23.643, 21.07, 20.969, 25.589, 21.651, 21.279], [19.333, 22.085, 24.295, 20.938, 21.907, 24.233, 20.457, 19.163], [12.612, 15.364, 21.457, 18.217, 17.14, 21.225, 15.054, 12.814], [7.101, 8.868, 14.822, 22.295, 20.558, 14.085, 8.798, 8.209], [3.876, 5.132, 9.38, 29.054, 27.93, 8.07, 4.07, 3.55]], "def": [[0.667, 0.752, 1.132, 3.411, 3.194, 1.031, 0.543, 0.667], [0.837, 0.767, 1.434, 3.256, 3.318, 1.364, 0.643, 0.543], [0.76, 0.806, 1.295, 1.194, 1.279, 1.333, 0.845, 0.713], [1.062, 0.868, 0.829, 0.977, 0.977, 0.899, 0.674, 0.868], [1.109, 0.752, 0.814, 0.698, 0.535, 0.783, 0.814, 0.76], [0.853, 0.682, 0.752, 0.519, 0.589, 0.674, 0.62, 0.837], [0.822, 0.581, 0.643, 0.566, 0.558, 0.504, 0.481, 0.899], [0.643, 0.519, 0.667, 0.38, 0.372, 0.295, 0.597, 0.752], [0.597, 0.31, 0.411, 0.287, 0.333, 0.442, 0.31, 0.589], [0.333, 0.217, 0.24, 0.209, 0.178, 0.248, 0.287, 0.38], [0.287, 0.116, 0.109, 0.434, 0.434, 0.209, 0.132, 0.264], [0.194, 0.101, 0.163, 0.674, 0.612, 0.132, 0.101, 0.163]], "alt": {"media": 42.04, "p25": 37.07, "p75": 47.78, "min": 25.13, "max": 63.18}}, {"equipo": "Pachuca", "entrenador": "Jorge Almada", "pres": [[0.942, 1.101, 0.619, 0.266, 0.295, 0.583, 0.835, 0.806], [2.029, 1.777, 1.158, 1.165, 1.072, 1.237, 1.36, 1.324], [2.662, 2.209, 2.043, 1.54, 1.619, 2.007, 1.95, 2.108], [2.971, 2.374, 2.223, 1.827, 2.036, 2.338, 2.626, 2.899], [2.935, 2.554, 1.964, 1.432, 1.612, 2.295, 2.626, 3.022], [2.604, 2.338, 2.129, 1.899, 1.942, 2.079, 2.633, 2.899], [2.727, 2.626, 2.165, 1.878, 1.676, 2.201, 2.755, 2.748], [2.374, 2.108, 2.115, 1.403, 1.705, 2.158, 2.403, 2.583], [1.683, 1.712, 1.662, 1.468, 1.626, 1.856, 1.885, 2.151], [0.935, 1.194, 1.647, 1.547, 1.496, 1.683, 1.504, 1.288], [0.755, 0.885, 1.144, 1.705, 1.856, 1.353, 0.921, 1.0], [0.417, 0.496, 0.626, 0.367, 0.496, 0.662, 0.554, 0.41]], "eq": [[4.079, 4.525, 6.518, 20.576, 22.856, 7.763, 3.525, 3.712], [8.396, 7.122, 10.554, 13.784, 15.885, 10.842, 6.194, 5.964], [12.216, 13.518, 16.137, 11.604, 11.367, 15.827, 11.885, 10.871], [20.086, 20.058, 21.928, 17.381, 17.676, 21.568, 19.216, 19.791], [25.482, 23.511, 23.957, 19.683, 18.144, 22.914, 24.094, 23.935], [27.784, 26.705, 24.223, 23.036, 22.698, 24.094, 26.95, 28.561], [32.863, 26.496, 22.64, 20.122, 23.079, 25.374, 26.554, 33.331], [32.187, 24.094, 20.432, 15.194, 16.554, 23.043, 26.942, 32.137], [29.144, 19.54, 17.899, 15.338, 16.77, 20.647, 24.633, 32.54], [18.173, 13.058, 15.029, 12.504, 12.59, 17.468, 18.396, 23.791], [11.072, 7.432, 9.878, 9.863, 12.101, 11.403, 9.612, 14.367], [9.151, 5.547, 6.719, 6.022, 7.187, 7.036, 6.568, 10.719]], "rv": [[10.022, 5.374, 4.712, 5.101, 5.108, 4.108, 4.266, 7.64], [14.165, 9.345, 7.763, 9.77, 10.194, 7.561, 7.647, 10.719], [21.986, 13.899, 13.719, 10.878, 9.82, 13.367, 12.806, 17.302], [29.022, 20.489, 18.597, 15.906, 15.914, 19.173, 19.734, 24.705], [27.928, 22.403, 20.698, 16.892, 16.799, 21.043, 23.396, 27.014], [27.547, 23.058, 21.554, 21.655, 20.165, 23.094, 23.957, 26.669], [24.755, 22.698, 21.885, 21.173, 23.209, 24.014, 23.669, 25.144], [22.259, 21.158, 21.302, 18.388, 18.662, 23.432, 22.453, 22.633], [17.799, 18.252, 19.741, 17.388, 17.482, 21.525, 20.583, 19.669], [11.187, 12.655, 17.842, 13.554, 14.05, 19.36, 14.863, 13.388], [6.777, 7.554, 13.511, 19.64, 19.216, 13.799, 8.446, 7.928], [4.072, 4.612, 8.964, 28.755, 29.058, 9.597, 5.619, 4.612]], "def": [[0.871, 1.043, 1.331, 3.158, 2.799, 1.158, 0.662, 0.669], [1.288, 1.266, 1.856, 3.547, 3.475, 1.763, 1.014, 0.77], [1.129, 1.065, 1.475, 1.525, 1.432, 1.511, 1.129, 1.108], [1.547, 1.173, 1.259, 0.971, 1.137, 1.295, 1.295, 0.899], [1.36, 1.388, 1.014, 0.813, 0.892, 1.079, 1.338, 1.446], [1.496, 1.086, 0.799, 0.827, 0.755, 0.806, 0.993, 1.374], [0.971, 0.863, 0.755, 0.619, 0.626, 0.863, 0.978, 1.036], [0.906, 0.763, 0.597, 0.482, 0.561, 0.813, 0.971, 1.058], [0.64, 0.597, 0.424, 0.338, 0.583, 0.489, 0.64, 0.791], [0.388, 0.309, 0.396, 0.201, 0.374, 0.489, 0.381, 0.547], [0.281, 0.101, 0.216, 0.331, 0.568, 0.317, 0.194, 0.259], [0.237, 0.115, 0.209, 0.475, 0.791, 0.245, 0.144, 0.223]], "alt": {"media": 43.41, "p25": 39.93, "p75": 46.97, "min": 27.66, "max": 56.74}}, {"equipo": "Atlas", "entrenador": "Diego Cocca", "pres": [[0.906, 0.927, 0.51, 0.312, 0.354, 0.521, 0.781, 0.479], [1.396, 1.406, 0.969, 0.885, 1.031, 1.479, 1.188, 1.312], [1.615, 1.656, 2.0, 1.25, 1.354, 1.938, 1.812, 1.833], [2.469, 2.083, 1.75, 1.385, 1.833, 1.917, 2.26, 2.333], [2.5, 2.24, 1.938, 1.573, 1.458, 2.135, 2.365, 2.521], [2.292, 2.635, 2.021, 1.573, 1.604, 1.99, 2.323, 2.385], [2.042, 2.271, 2.26, 1.76, 1.688, 2.167, 2.042, 2.438], [1.625, 2.292, 1.812, 1.438, 1.312, 1.562, 2.167, 2.052], [1.469, 1.729, 1.698, 1.385, 1.271, 1.531, 1.51, 1.667], [1.177, 1.292, 1.396, 1.167, 1.0, 1.26, 1.062, 1.031], [0.792, 0.865, 1.125, 1.302, 1.365, 1.042, 0.75, 0.615], [0.26, 0.427, 0.51, 0.323, 0.427, 0.396, 0.375, 0.333]], "eq": [[3.844, 4.344, 6.875, 24.635, 22.969, 7.156, 3.521, 3.104], [6.229, 6.333, 12.365, 19.708, 17.583, 13.115, 6.729, 6.094], [10.125, 12.344, 18.802, 14.802, 13.156, 17.646, 12.76, 10.771], [17.083, 17.906, 22.812, 17.656, 17.104, 20.198, 18.958, 16.094], [21.75, 21.292, 22.229, 18.562, 16.594, 20.042, 21.51, 19.417], [22.135, 21.594, 21.573, 19.042, 18.344, 19.708, 20.396, 21.604], [25.625, 22.74, 22.438, 18.573, 19.333, 19.448, 19.625, 22.354], [25.177, 21.625, 20.458, 14.469, 13.688, 17.479, 19.5, 22.177], [23.833, 19.354, 19.052, 14.49, 13.583, 15.312, 16.906, 21.552], [17.594, 13.104, 14.917, 10.354, 9.646, 12.375, 11.75, 15.26], [10.74, 8.01, 9.219, 8.75, 9.375, 8.104, 7.385, 10.927], [7.875, 4.812, 5.062, 6.094, 6.042, 5.198, 4.375, 7.833]], "rv": [[9.219, 4.927, 4.573, 5.385, 5.333, 4.792, 4.594, 7.271], [11.792, 7.188, 8.385, 9.25, 9.844, 8.344, 7.281, 10.469], [19.354, 12.917, 13.406, 9.865, 9.656, 12.375, 12.312, 16.938], [24.562, 18.229, 17.188, 13.958, 14.583, 16.521, 18.125, 24.448], [26.969, 23.115, 19.125, 15.104, 15.979, 21.812, 22.438, 24.458], [25.677, 23.302, 22.583, 19.938, 19.51, 23.396, 23.417, 23.896], [22.25, 21.312, 24.156, 21.719, 23.552, 24.052, 23.0, 22.812], [21.365, 22.906, 23.812, 17.615, 19.385, 23.625, 22.979, 20.938], [16.521, 20.083, 21.75, 18.875, 18.562, 22.49, 20.448, 19.406], [11.667, 13.375, 19.24, 15.042, 14.708, 18.406, 13.312, 10.333], [8.167, 7.708, 13.479, 19.854, 18.552, 13.375, 7.198, 6.802], [3.698, 4.302, 8.354, 25.188, 25.875, 7.406, 3.969, 3.438]], "def": [[0.792, 1.104, 1.271, 3.708, 3.635, 1.323, 0.656, 0.531], [0.854, 0.771, 1.906, 3.927, 4.083, 1.958, 0.844, 0.906], [0.948, 0.948, 1.219, 1.417, 1.365, 1.458, 0.906, 1.0], [1.083, 1.135, 1.146, 1.104, 1.042, 0.938, 1.156, 1.073], [1.208, 1.021, 0.917, 0.771, 0.594, 1.135, 1.115, 1.167], [1.083, 1.021, 0.927, 0.771, 0.531, 0.583, 0.844, 1.135], [0.927, 0.896, 0.792, 0.646, 0.656, 0.615, 0.844, 0.958], [0.844, 0.823, 0.792, 0.635, 0.552, 0.531, 0.708, 0.708], [0.667, 0.729, 1.021, 0.698, 0.573, 0.688, 0.542, 0.771], [0.656, 0.229, 0.802, 0.406, 0.375, 0.438, 0.354, 0.302], [0.25, 0.188, 0.281, 0.75, 0.615, 0.312, 0.115, 0.292], [0.208, 0.177, 0.26, 0.677, 0.865, 0.281, 0.104, 0.198]], "alt": {"media": 43.85, "p25": 38.85, "p75": 47.94, "min": 29.02, "max": 68.07}}, {"equipo": "Toluca", "entrenador": "Antonio Mohamed", "pres": [[0.701, 0.883, 0.805, 0.26, 0.481, 0.649, 0.909, 0.675], [1.688, 1.571, 1.675, 1.273, 1.195, 1.662, 1.701, 1.61], [2.143, 2.0, 2.117, 1.935, 1.545, 2.468, 2.338, 2.429], [2.338, 2.078, 2.623, 1.558, 1.766, 2.13, 2.519, 3.571], [2.117, 2.247, 2.104, 1.481, 1.792, 2.091, 2.156, 2.623], [2.338, 2.091, 2.195, 1.623, 1.727, 2.532, 2.338, 2.545], [2.429, 2.377, 2.182, 1.701, 1.961, 2.221, 2.13, 2.39], [1.779, 1.909, 1.948, 1.662, 1.325, 2.169, 2.0, 1.987], [1.545, 1.649, 1.766, 1.792, 1.403, 1.649, 2.117, 1.987], [1.156, 0.974, 1.805, 1.61, 1.429, 1.455, 1.273, 1.325], [0.571, 1.039, 1.377, 2.065, 1.844, 1.273, 0.922, 0.792], [0.364, 0.325, 0.442, 0.61, 0.481, 0.416, 0.429, 0.39]], "eq": [[4.0, 4.494, 8.234, 28.481, 28.792, 8.403, 4.948, 4.39], [9.701, 8.948, 14.974, 21.597, 22.701, 14.623, 9.026, 8.753], [14.078, 16.208, 24.455, 19.195, 16.922, 21.273, 15.935, 14.429], [20.753, 23.545, 28.416, 23.636, 22.091, 25.169, 23.532, 22.727], [23.844, 26.857, 30.494, 26.558, 22.13, 26.26, 23.117, 24.61], [25.468, 25.545, 31.857, 27.532, 25.61, 27.442, 23.974, 27.987], [28.935, 27.922, 29.143, 24.584, 25.792, 25.429, 24.286, 28.234], [28.26, 25.442, 25.506, 18.766, 19.117, 22.532, 22.701, 29.532], [29.506, 22.143, 24.182, 18.247, 17.948, 22.974, 23.584, 32.221], [20.545, 14.364, 19.156, 14.117, 14.338, 17.39, 17.416, 23.052], [10.429, 9.234, 11.468, 12.571, 11.442, 10.156, 9.558, 12.312], [7.818, 5.208, 6.156, 6.805, 6.961, 6.065, 4.909, 7.922]], "rv": [[7.922, 4.714, 4.831, 4.727, 4.935, 4.662, 4.844, 7.0], [13.675, 8.221, 9.13, 7.987, 8.481, 7.779, 7.455, 10.857], [19.156, 14.026, 13.182, 9.662, 10.208, 13.987, 12.558, 18.896], [24.519, 17.961, 16.13, 11.987, 13.221, 17.623, 18.273, 26.247], [23.403, 19.857, 18.364, 13.481, 12.701, 18.87, 20.519, 25.052], [24.338, 21.403, 21.208, 18.338, 17.636, 23.195, 23.844, 25.662], [22.416, 20.247, 21.974, 20.442, 22.649, 22.636, 22.429, 22.156], [20.403, 20.948, 22.143, 18.468, 19.727, 22.351, 23.221, 19.857], [17.519, 19.169, 21.13, 19.909, 19.208, 21.961, 20.519, 18.156], [11.403, 14.026, 20.364, 16.584, 16.091, 19.052, 13.935, 13.312], [6.987, 7.156, 14.325, 22.494, 20.221, 13.091, 8.805, 7.766], [3.519, 3.87, 9.091, 31.883, 30.675, 7.506, 4.234, 3.857]], "def": [[0.636, 0.662, 1.494, 3.13, 3.13, 1.221, 0.909, 0.584], [1.013, 0.922, 1.87, 3.0, 3.143, 1.377, 0.714, 0.831], [0.974, 0.818, 1.325, 1.26, 1.325, 1.338, 0.818, 1.013], [0.935, 0.87, 0.805, 0.636, 0.792, 1.0, 0.831, 1.455], [1.0, 0.818, 0.974, 0.494, 0.831, 0.688, 0.779, 1.091], [0.805, 0.74, 0.675, 0.519, 0.662, 0.623, 0.532, 1.013], [0.727, 0.623, 0.558, 0.532, 0.481, 0.571, 0.649, 0.805], [0.481, 0.688, 0.442, 0.273, 0.545, 0.481, 0.481, 0.636], [0.351, 0.442, 0.403, 0.429, 0.312, 0.481, 0.39, 0.727], [0.273, 0.247, 0.338, 0.221, 0.182, 0.325, 0.26, 0.299], [0.143, 0.091, 0.143, 0.455, 0.221, 0.195, 0.117, 0.221], [0.169, 0.091, 0.221, 0.545, 0.701, 0.234, 0.052, 0.143]], "alt": {"media": 40.89, "p25": 37.47, "p75": 44.92, "min": 26.0, "max": 58.84}}];
+  function pitch(inner, extra) {
+    var s = '<svg viewBox="-3 -11 126 94" role="img" aria-label="Cancha; el equipo ataca hacia la derecha">' +
+      '<g fill="var(--fg)" stroke="var(--fg)"><line x1="38" y1="-5.5" x2="76" y2="-5.5" stroke-width="1"/><polygon points="76,-8.5 83,-5.5 76,-2.5" stroke="none"/></g>' +
+      '<text x="20" y="-3.8" text-anchor="middle" style="font-size:4px;font-weight:600" fill="var(--fg)">Ataca</text>';
+    for (var k = 0; k < 12; k++) s += '<rect x="' + (k * 10) + '" y="0" width="10" height="80" fill="' + (k % 2 ? "#2A7436" : "#2F7D3C") + '"/>';
+    s += inner;
+    s += '<g fill="none" stroke="#fff" stroke-opacity=".9" stroke-width=".5"><rect x="0" y="0" width="120" height="80"/><line x1="60" y1="0" x2="60" y2="80"/><circle cx="60" cy="40" r="9.15"/>' +
+      '<rect x="0" y="18" width="18" height="44"/><rect x="102" y="18" width="18" height="44"/><rect x="0" y="30" width="6" height="20"/><rect x="114" y="30" width="6" height="20"/></g>';
+    return s + (extra || "") + '</svg>';
+  }
+  function cells(grid, fn) {
+    var s = "";
+    for (var i = 0; i < 12; i++) for (var j = 0; j < 8; j++) {
+      var f = fn(grid[i][j]); if (f) s += '<rect x="' + (i * 10) + '" y="' + (j * 10) + '" width="10" height="10" fill="' + f.c + '" fill-opacity="' + f.o.toFixed(2) + '"/>';
+    }
+    return s;
+  }
+  function vline(x, lbl) {
+    return '<line x1="' + x + '" y1="0" x2="' + x + '" y2="80" stroke="var(--fg)" stroke-width=".5" stroke-dasharray="2 1.5" stroke-opacity=".8"/><text x="' + (x + 1) + '" y="4.5" style="font-size:3.4px" fill="var(--fg)">' + lbl + '</text>';
+  }
+  var SR = ["#2F7D3C", "#C8E04B", "#FFD23A", "#FF8A1F", "#E5221B"], SB = ["#2F7D3C", "#9ED3FF", "#3F8CF0", "#1E4FD1", "#0B2F6B"];
+  function hex(c) { return [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)]; }
+  function col(st, t) { var p = Math.min(0.9999, Math.max(0, t)) * (st.length - 1), i = Math.floor(p), u = p - i, a = hex(st[i]), b = hex(st[i + 1]); return "rgb(" + [0, 1, 2].map(function (k) { return Math.round(a[k] + (b[k] - a[k]) * u); }).join(",") + ")"; }
+  function op(t, m) { return t < 0.1 ? 0 : Math.min(m || 0.9, 0.4 + t); }
+  function fill(id, build) {
+    var box = document.getElementById(id); if (!box) return;
+    box.innerHTML = MP.map(function (m, i) { return build(m, COMP[i]); }).join("");
+  }
+  function cap(m, big, sub) { return '<figcaption><b>' + m.equipo + '</b> · ' + m.entrenador.replace("André ", "").replace("Jorge ", "").replace("Antonio ", "").replace("Diego ", "") + '<span>' + big + '</span><span>' + sub + '</span></figcaption>'; }
+  function p95(vals) { vals.sort(function (x, y) { return x - y; }); return vals[Math.floor(vals.length * 0.95)]; }
+  function ramp(v, cap) { return Math.pow(Math.min(1, v / cap), 0.8); }
+  var tv = []; MP.forEach(function (m) { for (var i = 0; i < 12; i++) for (var j = 0; j < 8; j++) tv.push(m.eq[i][j]); });
+  var tmax = p95(tv);
+  fill("mp-terr", function (m, c) {
+    var g = "";
+    for (var i = 0; i < 12; i++) for (var j = 0; j < 8; j++) {
+      var gold = true, v = m.eq[i][j];
+      var tt = ramp(v, tmax);
+      g += '<rect x="' + (i * 10) + '" y="' + (j * 10) + '" width="10" height="10" fill="' + col(gold ? SR : SB, tt) + '" fill-opacity="' + op(tt) + '"/>';
+    }
+    var a = 0, r = 0; for (var i2 = 0; i2 < 12; i2++) for (var j2 = 0; j2 < 8; j2++) { if (i2 >= 8) a += m.eq[i2][j2]; if (i2 < 4) r += m.rv[i2][j2]; }
+    var zones = '<rect x="80" y="0" width="40" height="80" fill="none" stroke="#fff" stroke-width=".8" stroke-dasharray="2 1.5"/><rect x="0" y="0" width="40" height="80" fill="none" stroke="#fff" stroke-width=".8" stroke-dasharray="2 1.5"/>' +
+      '<text x="100" y="77" text-anchor="middle" style="font-size:4.2px;font-weight:700;paint-order:stroke;stroke:rgba(0,0,0,.8);stroke-width:1.3px" fill="#fff">propio ' + Math.round(a) + '</text><text x="20" y="77" text-anchor="middle" style="font-size:4.2px;font-weight:700;paint-order:stroke;stroke:rgba(0,0,0,.8);stroke-width:1.3px" fill="#fff">rival ' + Math.round(r) + '</text>';
+    return '<figure>' + pitch(g, zones) + cap(m, "Field tilt relativo " + c.estilo.field_tilt_relativo_pct.toFixed(1) + "%", "Por partido: " + Math.round(a) + " acciones propias en x > 80 contra " + Math.round(r) + " del rival en x < 40") + '<div class="tug" role="img" aria-label="Territorio: ' + c.estilo.field_tilt_relativo_pct.toFixed(1) + '% del equipo contra ' + (100 - c.estilo.field_tilt_relativo_pct).toFixed(1) + '% del rival"><i style="width:' + c.estilo.field_tilt_relativo_pct.toFixed(1) + '%"><b>' + c.estilo.field_tilt_relativo_pct.toFixed(0) + '%</b></i><span>' + (100 - c.estilo.field_tilt_relativo_pct).toFixed(0) + '%</span></div><div class="tugl"><span>' + m.equipo + '</span><span>Rival</span></div></figure>';
+  });
+  var pv = []; MP.forEach(function (m) { m.pres.forEach(function (r) { r.forEach(function (v) { pv.push(v); }); }); });
+  var vmax = p95(pv);
+  fill("mp-pres", function (m, c) {
+    var tot = 0, alto = 0, zona = 0; m.pres.forEach(function (r, i) { r.forEach(function (v) { tot += v; if (i >= 8) alto += v; if (i >= 8) zona += v; else if (i === 7) zona += v * 0.8; }); });
+    var g = cells(m.pres, function (v) { var t = ramp(v, vmax); return { c: col(SR, t), o: op(t) }; });
+    var zr = '<rect x="72" y="0" width="48" height="80" fill="none" stroke="#fff" stroke-width=".9" stroke-dasharray="2 1.5"/><text x="96" y="77" text-anchor="middle" style="font-size:4.2px;font-weight:700;paint-order:stroke;stroke:rgba(0,0,0,.8);stroke-width:1.3px" fill="#fff">' + Math.round(zona) + ' por partido</text>';
+    return '<figure>' + pitch(g, zr) + cap(m, "PPDA " + c.estilo.ppda.toFixed(2), "Presiones en x > 72: " + Math.round(zona) + " por partido · " + Math.round(100 * alto / tot) + "% de todas sus presiones en el último tercio rival") + '</figure>';
+  });
+  var dmax = 0; MP.forEach(function (m) { m.def.forEach(function (r) { r.forEach(function (v) { if (v > dmax) dmax = v; }); }); });
+  fill("mp-alt", function (m, c) {
+    var g = cells(m.def, function (v) { var t = Math.pow(v / dmax, 0.8); return { c: col(SR, t), o: op(t, 0.85) }; });
+    var a = m.alt;
+    g += '<rect x="' + a.p25 + '" y="0" width="' + (a.p75 - a.p25) + '" height="80" fill="#fff" fill-opacity=".5" stroke="#fff" stroke-width=".6" stroke-dasharray="2 1.5"/>' +
+      '<line x1="' + a.media + '" y1="0" x2="' + a.media + '" y2="80" stroke="rgba(0,0,0,.65)" stroke-width="3"/>' +
+      '<line x1="' + a.media + '" y1="0" x2="' + a.media + '" y2="80" stroke="#fff" stroke-width="1.5"/>' +
+      '<text x="' + (a.media + 1.5) + '" y="76" style="font-size:4.2px;font-weight:700;paint-order:stroke;stroke:rgba(0,0,0,.8);stroke-width:1.3px" fill="#fff">' + a.media.toFixed(1) + '</text>';
+    return '<figure>' + pitch(g, "") + cap(m, "Altura media " + a.media.toFixed(1), "Entre " + a.p25.toFixed(0) + " y " + a.p75.toFixed(0) + " en la mitad central de sus partidos") + '</figure>';
+  });
+})();
+
+/* tarjetas de técnicos */
+(function () {
+  var box = document.getElementById("tcards"); if (!box) return;
+  var K = ["var(--k1)", "var(--k2)", "var(--k3)", "var(--k4)"], T = [3, 1, 2, 2];
+  box.innerHTML = COMP.map(function (c, i) {
+    return '<div class="tcard"><span class="badge" style="background:' + K[i] + '" aria-hidden="true">' + c.equipo.charAt(0) + '</span><div><span class="eq">' + c.equipo + '</span><b>' + c.entrenador + '</b><small>' + c.n_partidos + ' partidos</small><small>' + T[i] + (T[i] === 1 ? ' título' : ' títulos') + ' de liga</small></div></div>';
+  }).join("");
+})();
+</script>
+</body></html>
